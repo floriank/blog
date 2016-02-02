@@ -14,6 +14,6 @@ I can provide some insights into the field though - and I hope that someone, esp
 
 Because after all, developing software is a joy to me and I like doing it for a living.
 
-If you have questions and or comments, please you can send me an email using `schnuffifk+blog@gmail.com`, using they public key you find on [keybase](https://keybase.io/schnuffi).
+If you have questions and or comments, please you can send me an [email](mailto:schnuffifk+blog@gmail.com), using they public key you find on [keybase](https://keybase.io/schnuffi).
 
 
