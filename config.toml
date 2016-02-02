@@ -1,0 +1,15 @@
+baseurl = "https://floriank.github.io"
+title = "Notes of a awful developer"
+contentdir = "content"
+publishdir = "public"
+canonifyurls = true
+copyright = "(c) 2016 Florian Kraft"
+[author]
+    name = "Florian Kraft"
+    github = "floriank"
+    twitter = "carhillion"
+    linkedin = "floriankraft"
+
+[indices]
+  category= "categories"
+
