@@ -1,4 +1,4 @@
-baseurl = "https://floriank.github.io"
+baseurl = "https://floriank.github.io/"
 title = "Notes of a awful developer"
 contentdir = "content"
 publishdir = "public"
