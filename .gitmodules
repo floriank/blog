@@ -1,0 +1,4 @@
+[submodule "nofancy"]
+	path = "themes/nofancy"
+	url = git@github.com:floriank/nofancy
+	branch = master
