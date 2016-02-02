@@ -1,7 +1,7 @@
 +++
-date = "2016-02-02T13:33:38+01:00"
+date = "2016-02-02T15:56:42+01:00"
 draft = true
-title = "about"    
+title = "About"
 +++
 
 I am a software developer. That's mostly it. I am not very good at it, but somehow I found my way into several companies and dealt with some larger projects, so I think I might have some experience.
@@ -13,4 +13,7 @@ Usually one would write here that they're passionate about some language or tech
 I can provide some insights into the field though - and I hope that someone, especially new developers just starting out (looking at you, inexperienced college graduates) might find these insights useful.
 
 Because after all, developing software is a joy to me and I like doing it for a living.
+
+If you have questions and or comments, please you can send me an email using `schnuffifk+blog@gmail.com`, using they public key you find on [keybase](https://keybase.io/schnuffi).
+
 
