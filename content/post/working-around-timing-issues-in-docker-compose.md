@@ -9,9 +9,9 @@ categories = [
 
 ## Containers
 
-I really like the concept of containers. Having been a somewhat avid [vagrant](https://vagrantup.com) user in the past, the speed gain that containers can provide over a virtual machine is a good sell to me. Besides having a very snapshottable environment I can bring up and down with dependencies packed neatly into containers. If you are reading this article you probably heard the sermon before.
+I really like the concept of containers. Having been a somewhat avid [vagrant](https://vagrantup.com) user in the past, the speed gain that containers can provide over a virtual machine is a good sell to me. Also, having a very snapshottable environment I can bring up and down with dependencies packed neatly into containers is a plus. If you are reading this article you probably heard the sermon before.
 
-If you did not hear the good word yet - read up on it. There are some good arguments for and against containers and the technology behind is interesting.
+If you did not hear the good word yet - read up on it. There are some good arguments for and against containers and the technology behind is quite interesting.
 
 There are several solutions for containerization out there - most notably [docker](https://docker.io) and [rkt](https://coreos.com/rkt/docs/latest/), both of which are written in Go and can manage containers on Linux, effectively wrapping [LXC](https://www.wikiwand.com/en/LXC).
 
@@ -26,11 +26,13 @@ If you're looking at a bigger project you might need multiple containers to run 
 - some kind of search server, e.g. SOLR, ElasticSearch, ThinkingSphinx
 - maybe one or two custom APIs detached from the main application
 
-Assuming that setup, you have 4 to 5 docker images that you're now orchestrating to setup your project. How tedious.
+The situation get's even worse if you decide to go full SOA by having a small fleet of microservices.
+
+Assuming the former setup, you have 4 to 5 docker images that you're now orchestrating to setup your project. How tedious.
 
 Enter [docker compose](https://docs.docker.com/compose/). It's a little tool as part of the `docker` toolkit that enables you to provide a yaml configuration and then starts up all of the containers required for your project with the configuration provided.
 
-And that is great - since you now only need the docker compose config in addition to the actual images (which `docker` will happily pull for you).
+And that's great - since you now only need the docker compose config in addition to the actual images (which `docker` will happily pull for you).
 
 To give an example:
 
@@ -85,11 +87,11 @@ Running `docker compose up` should start all of these containers. And if you're 
 
 ## Timing Problems
 
-Since we're not living in that kind of world, there might be some problems with this approach, most notably timing. 
+Since we're not living in a perfect world, there might be some problems with this approach, most notably timing. 
 
-`docker compose` will resolve your container dependencies for you, but the startup has no mercy for actual dependencies at runtime.
+`docker compose` will resolve your container dependencies for you, but the startup has no mercy for actual dependencies at runtime and will crash if the container you're trying to start crashes itself (to be more precise - if the command you ran crashed).
 
-Let's say that our fancy rails application requires a connection to the ElasticSearch server to start up. You are likely to end up with a crash of the whole application stack you just build becase ElasticSearch takes longer to boot than the Rails application itself. Your stack will be torn down by `docker compose` before you know what's going on, just because the main container crashed.
+Let's say that our fancy Rails application requires a connection to the ElasticSearch server to start up. You are likely to end up with a crash of the whole application stack becase ElasticSearch takes longer to boot than the Rails application itself. Your stack will be torn down by `docker compose` before you know what's going on, just because the main container crashed.
 
 There is an ongoing discussion about this problem on [Github](https://github.com/docker/compose/issues/374). So far most solutions revolve around having a custom script wait for the required dependencies to start up and be reachable before actually firing the container command.
 
@@ -97,7 +99,7 @@ There is an ongoing discussion about this problem on [Github](https://github.com
 
 I hesitate to call this a solution, but here is my workaround which I used to tackle this problem:
 
-Introduce a shellscript `start.sh` in your application and use the following:
+Introduce a shellscript `start.sh` in your application and put the following in there:
 
 ```bash
 #!/bin/bash
@@ -126,7 +128,7 @@ Eseentially, the script uses `netcat` to query the `elasticsearch` host on the r
 
 This is far from a perfect solution. To start off, a counter could be used to abort once the script queried long enough. It's also dependent on `netcat` as part of the container, which might be undesirable if you don't want the extra dependency.
 
-I hope this will help in the future, tackling these issues is kind of a problem when looking at the learning curve and might not be obvious to everyone.
+I hope this will help in the future, tackling these issues got me stuck for a little bit on the learning curve.
 
 ## Resources
 
