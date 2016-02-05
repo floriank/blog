@@ -86,4 +86,4 @@ This is a minimal setup and one could toy around using `nginx` for serving the i
 
 ## Continuing
 
-[In the next part]({{< ref "using-phoenix-with-docker-part-2-containerization" >}}), we'll look into the application stack and discuss Phoenix a bit more in depth. If you are more impatient, consider [skipping directly to part 3]({{< ref "using-phoenix-with-docker-part-3-containerization" >}}) to see how the `Dockerfile`s of our components look like and what the `docker compose` will look like. Or if it even works.
+[In the next part]({{< ref "using-phoenix-with-docker-part-2-containerization" >}}), we'll look into the application stack and discuss Phoenix a bit more in depth. If you are more impatient, consider [skipping directly to part 3]({{< ref "using-phoenix-with-docker-part-3-containerization" >}}) to see how the `Dockerfile`s of our components look like and what the `docker compose` process will be. Or if it even works.
