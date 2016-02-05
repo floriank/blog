@@ -1,6 +1,6 @@
 +++
 date = "2016-02-04T10:33:17+01:00"
-draft = true
+draft = false
 title = "Working around timing issues in docker compose"
 categories = [
     "development"

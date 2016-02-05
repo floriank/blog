@@ -2,9 +2,12 @@
 date = "2016-02-05T12:21:24+01:00"
 draft = true
 title = "Using phoenix with docker, Part 1: Introduction"
+categories = [
+    "development"
+]
 +++
 
-_This is part one of a three part series_: **Part 1** - [Part 2](#foo) - [Part 3](#bar)
+_This is part one of a three part series_: **Part 1** - [Part 2]({{< ref "using-phoenix-with-docker-part-2-implementation.md">}}) - [Part 3]({{< ref "using-phoenix-with-docker-part-3-containerization.md" >}})
 
 A [colleague of mine](https://kholbekj.surge.sh) will not shut up about [this](https://elixir-lang.org).
 
@@ -16,13 +19,13 @@ Rails introduced a lot of structure to web projects, but, as most people I work 
 
 So - Elixir will make everything magically better, right? Probably not. Show me a new advanced technology everyone praises, I'll show you at least one (former PHP) developer who is able to screw things up in your project with it. A good measure of a new language - to me - therefore would be how strongly you have to stick to the idioms that the language provides to solve your problems. Granted, this requires reflection on one's own side to determine which kind of problems are to be solved. Also, if the technology at hand is the right one to solve them, but that is just rambling on my part on what programming actually is.
 
-## Phoenix & Elixir
+## Using Phoenix & Elixir
 
-So - introduce Elixir. Elixir runs on the [Erlang](https://www.wikiwand.com/en/Erlang_(programming_language)) VM called BEAM. Being almost as old as myself (the first version of it was released in 1986), it's one of the pieces of software that have been around so long it's practically optimized to a degree that no recently released `npm` library could ever attain.
+Introduce Elixir. Elixir runs on the [Erlang](https://www.wikiwand.com/en/Erlang_(programming_language)) VM called BEAM. Being almost as old as myself (the first version of it was released in 1986), it's one of the pieces of software that have been around so long it's practically optimized to a degree that no recently released `npm` library could ever attain.
 
 The fans usually pull out the [WhatsApp example here](http://www.wired.com/2015/09/whatsapp-serves-900-million-users-50-engineers/). That has in part to do with the Erlang VM being an extremly well optimized and well maintained piece of technology. The other part is the [network stack of FreeBSD](https://www.quora.com/How-is-FreeBSDs-network-stack-superior-to-that-of-Linux), which is its own kind of animal. I confess I never looked into it, but I hear the praise from over the hills.
 
-So, yeah, using Erlang is a good idea apparently. And Elixir makes it easier, because it packages it all in a more Ruby-esque, more "friendly" syntax. We can relate and do the same thing we always do - building our applications on top of a new VM. Can't be that different from the JVM, can it now? We got used to [jRuby](https://jruby.org) and I think that one guy in the basement is still using and maintaining his own fork of [IronRuby](https://ironruby.net). He also doesn't shave anymore.
+Using Erlang is a good idea apparently and Elixir makes it easier, because it packages it all in a more Ruby-esque, more "friendly" syntax. We can relate and do the same thing we always do - building our applications. Can't be that different from the JVM, can it now? We got used to [jRuby](https://jruby.org) and I think that one guy in the basement is still using and maintaining his own fork of [IronRuby](https://ironruby.net). He also doesn't shave anymore.
 
 Except we cannot - since Elixirs concepts are vastly different from what Ruby can provide you with. And you should keep that in mind, always, especially when starting out. I highly recommend [Dave Thomas' book here](https://pragprog.com/book/elixir12/programming-elixir-1-2) to start learning Elixir.
 
@@ -83,4 +86,4 @@ This is a minimal setup and one could toy around using `nginx` for serving the i
 
 ## Continuing
 
-[In the next part](#foo), we'll look into the application stack and discuss Phoenix a bit more in depth. If you are more impatient, consider [skipping directly to part 3](#bar) to see how the `Dockerfile`s of our components look like and what the `docker compose` will look like. Or if it even works.
+[In the next part]({{< ref "using-phoenix-with-docker-part-2-containerization" >}}), we'll look into the application stack and discuss Phoenix a bit more in depth. If you are more impatient, consider [skipping directly to part 3]({{< ref "using-phoenix-with-docker-part-3-containerization" >}}) to see how the `Dockerfile`s of our components look like and what the `docker compose` will look like. Or if it even works.
