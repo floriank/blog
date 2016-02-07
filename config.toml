@@ -4,6 +4,7 @@ contentdir = "content"
 publishdir = "public"
 canonifyurls = true
 copyright = "(c) 2016 Florian Kraft"
+theme = "nofancy"
 [author]
   name = "Florian Kraft"
   github = "floriank"
