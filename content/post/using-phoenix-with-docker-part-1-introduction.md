@@ -21,7 +21,7 @@ So - Elixir will make everything magically better, right?
 
 Probably not. 
 
-Show me a new "advanced" technology everyone praises, I'll show you at least one (former PHP) developer who is able to screw things up in your project with it. 
+Show me a new "advanced" technology everyone praises, I'll show you at least one developer who is able to screw things up in your project with it. 
 
 A good measure of a new language - to me - therefore would be how strongly you have to stick to the idioms that the language provides to solve your problems. Granted, this requires reflection on one's own side to determine which kind of problems are to be solved. Also, if the technology at hand is the right one to solve them, but that is just me rambling on what programming actually is, beside writing the code.
 
