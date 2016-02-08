@@ -67,8 +67,8 @@ The project will do the following:
 
 So, in practise, this should look as follows:
 
-1. User comes to url, uploads an image and get's redirected to `/CuteDomesticSavannahKitty`
-2. User can now use `/TinyCuteDomesticSavannahKitty`, `/LargeCuteDomesticSavannahKitty` and `/MonstrousCuteDomesticSavannahKitty` to get the resized versions as well.
+1. User comes to url, uploads an image and get's redirected to `/CuteDomesticSavannahKitteh`
+2. User can now use `/TinyCuteDomesticSavannahKitteh`, `/LargeCuteDomesticSavannahKitteh` and `/MonstrousCuteDomesticSavannahKitteh` to get the resized versions as well.
 
 **Please note** that I am intentionally - and shamelessly - stealing the URL naming strategy from [gfycat](https://gfycat.com/).
 
