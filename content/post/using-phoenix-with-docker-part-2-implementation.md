@@ -68,7 +68,7 @@ You should end up with something like this:
 
 I will not go through the meaning of each folder, as this would probably way too much for this article.
 
-If you do not wish to do anything yourself, I prepared a [repository here](https://github.com/floriank/kitteh-uploader). You may use the tag `01-lets-go` to get this codebase. 
+If you do not wish to do anything yourself, I prepared a [repository here](https://github.com/floriank/kitteh-uploader). You may use the tag `01-lets-go` [to get this initial codebase](https://github.com/floriank/kitteh-phoenix/tree/01-lets-go). 
 
 ## Scaffolding
 
@@ -166,7 +166,7 @@ That being said, replacing everything in `index.html.eex` with
 
 should do the trick. No, we are not using the [form builders that Phoenix provides](http://hexdocs.pm/phoenix_html/Phoenix.HTML.Form.html), but feel free to read up on them. They're very changeset-centric in my opinion at the moment and I do miss the equivalents for just building tags. Then again, this might be overkill, as we can just use plain HTML instead.
 
-I also changed the `app.html.eex` a bit. If that is all too much frontend stuff for you, i suggest you look at the `02-simple-frontend` tag.
+I also changed the `app.html.eex` a bit. If that is all too much frontend stuff for you, i suggest you look at the `02-simple-frontend` [tag here](https://github.com/floriank/kitteh-phoenix/tree/02-simple-frontend).
 
 ## New routes
 
@@ -256,7 +256,7 @@ If all goes well, this should render our frontend again with what we previously 
 
 a virtual `file` attribute has to exist in the `Image` model. 
 
-If this was all just ramblings of a mad developer for you, you can also check out the tag `03-actually-read-the-docs`.
+If this was all just ramblings of a mad developer for you, you can also check out the tag `03-actually-read-the-docs` [here](https://github.com/floriank/kitteh-phoenix/tree/03-actually-read-the-docs).
 
 ## Handle the file
 
@@ -270,7 +270,7 @@ The controller action has to do the following:
 4. if that was successful, redirect to the `show` action for the new image
 5. (alt) if not, redirect to the `index` with a message
 
-I will skip the validation on the file - there could be some useful stuff there, like validating the filesize and the actual mime type. 
+I will skip the validation on the file - there could be some useful stuff there, like validating the filesize and the actual mime type. Also, the validations would fit more naturally into the `Image` module.
 
 We'll skip this here and assume that the file given is something we want.
 
@@ -287,17 +287,97 @@ Phoenix will give us the file as a `Plug.Upload` in our `params` to the newly cr
 # [...]
 ```
 
-@TODO: Describe the code changes
+Thinking like a Rails developer, the fat model approach comes to mind. Let's put all the logic for this into a model and let the controller action pass in the params. 
 
-If this is all to much coding for now and you would like the easy way out, check teg tag `04-enable-uploading`.
+This is not viable here, since Elixir ultimately does not care where your function lives. In the end it's just different names for modules your functions and and structs live in.
+
+I decided in favour of a more controller based approach. The controller will do the the copying and transform the file input into a usable `params` map:
+
+```elixir
+# web/controllers/page_controller.ex
+# [...]
+  def upload(conn, %{ "image" => %{ "file" => file } }) do
+    # transform the uploaded file into a changeset
+    params = file
+      |> copy_file(unique_name)
+    changeset = Image.changeset(%Image{}, params)
+
+    # try to insert the newly generated changeset
+  end
+# [...]
+```
+
+The copy file function acutally does the more "heavy lifting":
+
+```elixir
+defp copy_file(file) do
+  extension = Path.extname(file.filename)
+  target = target_path <> name <> extension
+  case File.copy(file.path, target) do
+    {:ok, size} ->
+      %{
+        generated_name: name,
+        token: String.downcase(name),
+        path: target,
+        original_name: file.filename,
+        content_type: file.content_type,
+        size: size
+      }
+    {:error, _} ->
+      %{}
+  end
+end
+```
+
+Depending on whether the copying was successful, we either get a proper `params` map with all the necessary information filled in or we are left with an empty map that will never pass our validations.
+
+Note that `target_path` actually behaves differently from what you would expect. In Phoenix, you do not find the same behaviour as with Rails' `Rails.root`. 
+
+For now, we need a target path that lives within our application and we can access. But our codebase will be compiled (in contrast to a Ruby codebase), so we're cannot be sure where our bytecode ends up. 
+
+Phonix does provide this though:
+
+```elixir
+  Application.app_dir(:kitteh, "priv") <> "/static/uploads/"
+```
+
+See [this StackOverflow answer](http://stackoverflow.com/questions/33931176/finding-a-file-in-a-phoenix-app-script-rails-root#) for more information. The actual implementation used is found [here](https://github.com/floriank/kitteh-phoenix/blob/04-enable-uploading/web/controllers/page_controller.ex#L81).
+
+After having generated a `params` map, the rest is pretty easy and is just the same as in any Phoenix tutorial you might find:
+
+- generate a changeset based on `Image`
+- insert that changeset
+- redirect to the show action or abort and rerender the index template
+
+In case you were wondering: 
+
+The shorthand generated for the kitty is generated via `Image.generate_unique_name`, which [uses collected seed data](https://github.com/floriank/kitteh-phoenix/blob/04-enable-uploading/web/models/image.ex#L41) to generate a different combination of these attributes. We have to try again if we actually used the name before in the database. Since Elixir does not have any loops, we [resort to recursion](https://github.com/floriank/kitteh-phoenix/blob/04-enable-uploading/web/controllers/page_controller.ex#L56) until we find a name that we can use.
+
+**Note**: This has no safety measures - if all combinations of the attributes are used up, our database is "full" and we are screwed.
+
+After the image is persisted we redirect to `show`. Additionally, an `ImageController` is introduced with a `show` action [here](https://github.com/floriank/kitteh-phoenix/blob/04-enable-uploading/web/controllers/image_controller.ex#L6) to actually serve up the image for now. This is intermediary - ultimately, we'll not use Phoenix to serve assets in production.
+
+If all goes well, the upload should work and the original image should be served under a memorable shorthand.
+
+### Shortcuts
+
+If this is all to much coding and you would like the easy way out, check out the tag `04-enable-uploading` [here](https://github.com/floriank/kitteh-phoenix/tree/04-enable-uploading).
 
 ## Resizing images
 
-This is all great, but wouldn't it be nice if we had all the images for the different sized images pre-generated? Last time I looked, this is a somewhat expensive task. 
+Remember the image modifiers? Like "Tiny", "Large" and "Monstrous"? We forgot about those.
 
-This looks like a solution that could use a queue. Frotunately, we're on the Erlang VM and can utilize its processes to do the work in the background.
+It would be nice if we had all the images for the different sized images pre-generated. We could use the same mechanisms we already have implemented to serve them.
 
-If this is all the same to you and you could not care less how the images are generated exactly, check out the tag `05-resizing-cats`.
+### GenServer
+
+In a (newer) Rails environment, we could utilize anything that fulfills the interface of [`ActiveJob`](http://edgeguides.rubyonrails.org/active_job_basics.html, like an adapter to [Sidekiq](http://sidekiq.org/) or the `delayed_job`(https://github.com/collectiveidea/delayed_job) gem. We spin up a second OS process to generate the image,
+
+Not an option here though. There are some solutions to queues and background jobs, but we are on the Erlang VM anyway, so wht not just utilize the technology available to us? After all, BEAM processes are cheap and lightweight.
+
+[GenServer](http://elixir-lang.org/getting-started/mix-otp/genserver.html) might be the answer here. Besides reading the documentation, Daniel Berkompas has done a very excellent job of explaining it in [his LearnElixir.tv episodes](https://www.learnelixir.tv/episodes). It's paid content but worth every dollar and it's still expanded. While you're at it, check out [his blog](http://blog.danielberkompas.com/).
+
+If this is all the same to you and you could not care less how the images are generated exactly, check out the tag `05-resizing-cats` [here](https://github.com/floriank/kitteh-phoenix/tree/05-resizing-cats).
 
 ## Problems of the demo app
 
