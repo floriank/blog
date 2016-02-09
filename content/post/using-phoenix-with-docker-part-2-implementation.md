@@ -45,7 +45,7 @@ If you need more detail, [consider visiting the Phoenix docs](http://www.phoenix
 mix phoenix.new kitteh
 ```
 
-should create a new Phoenix project for you in the folder `./kitteh`. When asked to install dependencies, you should probably say yes, altough it's irrelevant, since we're not going to build a frontend.
+should create a new Phoenix project for you in the folder `./kitteh`. When asked to install dependencies, you should probably say yes, altough it's irrelevant, since we're not going to build a complex frontend.
 
 You should end up with something like this:
 
@@ -66,23 +66,21 @@ You should end up with something like this:
 └── web
 ```
 
-I will not go through the meaning of each folder, as this would probably way too much for this article.
-
-If you do not wish to do anything yourself, I prepared a [repository here](https://github.com/floriank/kitteh-uploader). You may use the tag `01-lets-go` [to get this initial codebase](https://github.com/floriank/kitteh-phoenix/tree/01-lets-go). 
+If you do not wish to do anything yourself, I prepared a [repository here](https://github.com/floriank/kitteh-uploader). You may use the tag `01-lets-go` [to get the initial codebase](https://github.com/floriank/kitteh-phoenix/tree/01-lets-go). 
 
 ## Scaffolding
 
 Scaffolding is a pretty fast and reliable way in Phoenix to get off the ground. We're not going to use it to its full potential here.
 
-But let's generate a controller:
+Consider generating a controller:
 
 ```bash
 mix phoenix.gen.html --no-model Image images
 ```
 
-This might be a bit counter-intuitive (it is to me) - but generating just a controller and its views requires the all-including `gen.html` task, which normally generates a complete resource with views associated.
+This might be a bit counter-intuitive (it is to me) - but generating just a controller and its views requires the all-including `gen.html` task, which normally generates a complete resource with views associated, complete with model files included.
 
-looking at our newly generated controller, we notice that it has been filled with all kind of good stuff:
+Looking at our newly generated controller, we notice that it has been filled with all kind of good stuff:
 
 ```elixir
 defmodule Kitteh.ImageController do
@@ -111,9 +109,9 @@ defmodule Kitteh.ImageController do
 
 Woah.
 
-Hold your horses. All I wanted was a simple controller with an action or maybe two.
+Hold your horses. All I wanted was a simple controller with an action or two.
 
-So, let's rollback the changes. Except we cannot. At least not conveniently, as Phoenix does not provide a reverse-option for its generators. Yet. I just guessed this right now without actually looking that up. 
+So, let's rollback the changes. There is no convenient way to this yet:
 
 ```bash
 git clean -f && rm -rf web/templates/images
@@ -123,23 +121,27 @@ to the rescue. Phew.
 
 ## Simpler times
 
-Let's fall back to the already generated `PageController`. It already has an action `index` ready to use. At the moment it renders a file called `index.html.eex` ([link for the lazy](https://github.com/floriank/kitteh-phoenix/blob/lets-go/web/templates/page/index.html.eex)) - it's also generated for us. It constitutes a demo partial that together with the `app.html.eex` ([this one here](https://github.com/floriank/kitteh-phoenix/blob/lets-go/web/templates/layout/app.html.eex)) forms a complete overview if we go and visit the locally running instance at [localhost](http://localhost:4000).
+Let's fall back to the already generated `PageController`. It already has an action `index` ready to use. 
 
-That is after running 
+At the moment it renders a file called `index.html.eex` ([link for the lazy](https://github.com/floriank/kitteh-phoenix/blob/lets-go/web/templates/page/index.html.eex)). It constitutes a demo partial that together with the `app.html.eex` ([this one here](https://github.com/floriank/kitteh-phoenix/blob/lets-go/web/templates/layout/app.html.eex)) forms a complete webpage at the `/` route. 
+
+We can look at it on the locally running instance at [localhost](http://localhost:4000).
 
 ```bash
 iex -S mix phoenix.server
 ```
 
-of course.
+will start an instance for us.
 
 Neat.
 
-## Providing a frontend
+## Providing a "frontend"
 
-This should be rather straightfoward. Phoenix includes [Bootstrap](https://getbootstrap.com) by default. I could disagree with that, but then again, using Bootstrap is relatively straight forward. Discussing the frontend choices made by Phoenix is futile at the moment. 
+This should be easy. 
 
-The team apparently decided to just extract that decision and delegate it to the user, as the frontend options in the year 2016 are many and there are no decisions to be made by a framework for you that would fit you use case perfectly.
+Phoenix includes [Bootstrap](https://getbootstrap.com) by default. I could disagree with that, but then again, using Bootstrap is not to inconvenient.
+
+The Phoenix team apparently decided to delegate the frontend choices to the userbase. A wise choice in the short run, als the whole frontend sector is quite fragmented at the moment (early 2016).
 
 That being said, replacing everything in `index.html.eex` with
 
@@ -164,13 +166,19 @@ That being said, replacing everything in `index.html.eex` with
 </div>
 ```
 
-should do the trick. No, we are not using the [form builders that Phoenix provides](http://hexdocs.pm/phoenix_html/Phoenix.HTML.Form.html), but feel free to read up on them. They're very changeset-centric in my opinion at the moment and I do miss the equivalents for just building tags. Then again, this might be overkill, as we can just use plain HTML instead.
+should do the trick. 
 
-I also changed the `app.html.eex` a bit. If that is all too much frontend stuff for you, i suggest you look at the `02-simple-frontend` [tag here](https://github.com/floriank/kitteh-phoenix/tree/02-simple-frontend).
+No, we are not using the [form builders that Phoenix provides](http://hexdocs.pm/phoenix_html/Phoenix.HTML.Form.html), but feel free to read up on them. 
+
+They're very changeset-centric at the moment and I do miss the equivalents for just building tags. We can just use plain HTML instead.
+
+I also changed the `app.html.eex` a bit. 
+
+If that is all too much frontend stuff for you, i suggest you look at the `02-simple-frontend` [tag here](https://github.com/floriank/kitteh-phoenix/tree/02-simple-frontend).
 
 ## New routes
 
-We defined a `/upload` path that the form uses, but this routes is nowhere to be found. Let's add it:
+We defined a `/upload` path that the form uses, but this route is nowhere to be found. Let's add it:
 
 ```elixir
 # see web/router.ex
@@ -181,12 +189,12 @@ We defined a `/upload` path that the form uses, but this routes is nowhere to be
     get "/", PageController, :index
 
     # the new route
-    get "/upload", PageController, :upload
+    post "/upload", PageController, :upload
   end
 # [...]
 ```
 
-**Note** I also sneakily added a `required` attribute to the file-`input`, to avoid any validation concerns.
+**Note** I also sneakily added a `required` attribute to the file-`input`, to avoid [any validation concerns](http://i.imgur.com/GluNcro.jpg).
 
 If we try to send the form n... we notice that we're missing a way to submit the form and add a button first.
 
@@ -194,19 +202,20 @@ If we try to send the form now, it will crash, since no action will take care of
 
 But wait, how do I upload stuff anyway? [Should the framework not provide me with some way to make this easier?](http://www.phoenixframework.org/docs/file-uploads).
 
-Kids, read your documentation before heading into battle.
+Kids, **read your documentation** before heading into battle.
 
 ## Reading the documentation
 
-Turns out, the Phoenix people do provide something to do file uploads. The utilize a module called `Plug.Upload`, which is part of the underlying `Plug` module. 
+Turns out, the Phoenix people do provide something to do file uploads. They utilize a module called `Plug.Upload`, which is part of the underlying `Plug` module. 
 
-That mean s we have to actually use the form builders after all. And guess what, we also use the form builders because now we're dealing with changesets. 
+That means we can actually use the form builders after all since we're going the changeset route.
 
 I feel silly.
 
 Create a new model:
 
 ```bash
+# note that this is just my initial try, have a look at the migrations for the actual fields used
 mix phoenix.gen.model Image original_name:string url:string size:integer 
 ```
 
@@ -260,7 +269,7 @@ If this was all just ramblings of a mad developer for you, you can also check ou
 
 ## Handle the file
 
-It's time for some action in the controller, because at the moment our application will crash, if we try to submit the form with an image.
+It's time for some action in the controller, because at the moment our application will crash if we try to submit the form with an image.
 
 The controller action has to do the following:
 
@@ -270,11 +279,11 @@ The controller action has to do the following:
 4. if that was successful, redirect to the `show` action for the new image
 5. (alt) if not, redirect to the `index` with a message
 
-I will skip the validation on the file - there could be some useful stuff there, like validating the filesize and the actual mime type. Also, the validations would fit more naturally into the `Image` module.
+I will skip the validation on the file - one could do this by validating the `size` field of the changeset before inserting.
 
 We'll skip this here and assume that the file given is something we want.
 
-Phoenix will give us the file as a `Plug.Upload` in our `params` to the newly created `upload` function in `PageController`:
+Phoenix will give us the file as a `Plug.Upload` struct in our `params` to the newly created `upload` function in `PageController`:
 
 ```elixir
 # web/controllers/page_controller.ex
@@ -287,9 +296,9 @@ Phoenix will give us the file as a `Plug.Upload` in our `params` to the newly cr
 # [...]
 ```
 
-Thinking like a Rails developer, the fat model approach comes to mind. Let's put all the logic for this into a model and let the controller action pass in the params. 
+Thinking like a Rails developer, the fat model approach comes to mind. Let's put all the logic for this into a model and let the controller action pass in the params. Be done with it, move on. Have a beer maybe.
 
-This is not viable here, since Elixir ultimately does not care where your function lives. In the end it's just different names for modules your functions and and structs live in.
+This is not viable here, since Elixir ultimately does not care where your function lives. _There are no models, just functions and structs_.
 
 I decided in favour of a more controller based approach. The controller will do the the copying and transform the file input into a usable `params` map:
 
@@ -333,17 +342,17 @@ Depending on whether the copying was successful, we either get a proper `params`
 
 Note that `target_path` actually behaves differently from what you would expect. In Phoenix, you do not find the same behaviour as with Rails' `Rails.root`. 
 
-For now, we need a target path that lives within our application and we can access. But our codebase will be compiled (in contrast to a Ruby codebase), so we're cannot be sure where our bytecode ends up. 
+For now, we need a target path that lives within our application and we can access. But our codebase will be compiled (in contrast to a Ruby codebase), so we're cannot be sure where our bytecode ends up (_Hint_: It's in the `./_build` folder). 
 
-Phonix does provide this though:
+We can do this though:
 
 ```elixir
-  Application.app_dir(:kitteh, "priv") <> "/static/uploads/"
+  Application.app_dir(:kitteh, "priv")
 ```
 
 See [this StackOverflow answer](http://stackoverflow.com/questions/33931176/finding-a-file-in-a-phoenix-app-script-rails-root#) for more information. The actual implementation used is found [here](https://github.com/floriank/kitteh-phoenix/blob/04-enable-uploading/web/controllers/page_controller.ex#L81).
 
-After having generated a `params` map, the rest is pretty easy and is just the same as in any Phoenix tutorial you might find:
+After having generated a `params` map, the rest is just the same as in any Phoenix tutorial you might find:
 
 - generate a changeset based on `Image`
 - insert that changeset
@@ -371,11 +380,11 @@ It would be nice if we had all the images for the different sized images pre-gen
 
 ### GenServer
 
-In a (newer) Rails environment, we could utilize anything that fulfills the interface of [`ActiveJob`](http://edgeguides.rubyonrails.org/active_job_basics.html, like an adapter to [Sidekiq](http://sidekiq.org/) or the `delayed_job`(https://github.com/collectiveidea/delayed_job) gem. We spin up a second OS process to generate the image,
+In a (newer) Rails environment, we could utilize anything that fulfills the interface of [`ActiveJob`](http://edgeguides.rubyonrails.org/active_job_basics.html, like an adapter to [Sidekiq](http://sidekiq.org/) or the `delayed_job` [gem](https://github.com/collectiveidea/delayed_job) gem. We basically spin up a second OS process to generate the image, regardless of the solution.
 
-Not an option here though. There are some solutions to queues and background jobs, but we are on the Erlang VM anyway, so wht not just utilize the technology available to us? After all, BEAM processes are cheap and lightweight.
+Not an option here though. There are some solutions to queues and background jobs, but we are on the Erlang VM anyway, so we can utilize the technology available to us. After all, BEAM processes are cheap and lightweight.
 
-[GenServer](http://elixir-lang.org/getting-started/mix-otp/genserver.html) might be the answer here. Besides reading the documentation, Daniel Berkompas has done a very excellent job of explaining it in [his LearnElixir.tv episodes](https://www.learnelixir.tv/episodes). It's paid content but worth every dollar and it's still expanded. While you're at it, check out [his blog](http://blog.danielberkompas.com/).
+[GenServer](http://elixir-lang.org/getting-started/mix-otp/genserver.html) might be the answer here. Besides reading the documentation, Daniel Berkompas has done a very excellent job of explaining it in [his LearnElixir.tv episodes](https://www.learnelixir.tv/episodes). It's paid content but worth every dollar and he's still expanding the episode list. While you're at it, check out [his blog](http://blog.danielberkompas.com/).
 
 If this is all the same to you and you could not care less how the images are generated exactly, check out the tag `05-resizing-cats` [here](https://github.com/floriank/kitteh-phoenix/tree/05-resizing-cats).
 
