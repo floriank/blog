@@ -21,7 +21,7 @@ Installing Elixir is hopefully straight forward to you - it's **not** as conveni
 sudo apt-get install elixir
 ```
 
-as it equires the installation of Erlang and the **O**pen **T**elephony **P**latform (OTP). A more detailed guide on how to do the installation of Elixir (including the installation of Erlang/OTP [can be found on the homepage](http://elixir-lang.org/install.html) - regardless of your preferred OS-choice. 
+as it equires the installation of Erlang and the **O**pen **T**elephony **P**rotocol (OTP). A more detailed guide on how to do the installation of Elixir (including the installation of Erlang/OTP [can be found on the homepage](http://elixir-lang.org/install.html) - regardless of your preferred OS-choice. 
 
 ### Phoenix
 
@@ -347,7 +347,7 @@ For now, we need a target path that lives within our application and we can acce
 We can do this though:
 
 ```elixir
-  Application.app_dir(:kitteh, "priv")
+Application.app_dir(:kitteh, "priv")
 ```
 
 See [this StackOverflow answer](http://stackoverflow.com/questions/33931176/finding-a-file-in-a-phoenix-app-script-rails-root#) for more information. The actual implementation used is found [here](https://github.com/floriank/kitteh-phoenix/blob/04-enable-uploading/web/controllers/page_controller.ex#L81).
@@ -392,13 +392,19 @@ If this is all the same to you and you could not care less how the images are ge
 
 This demo application has quite a few problems, some of them already discussed, some of them a little less obvious:
 
-@TODO: List of problems and bugs
+- **no tests** - this is a biggie and nothing to sweep under the rug. Since this is not intended for production purposes, I can live with it.
+- the amount of images uploaded is limited to the combination limit of the seed data
+- Naming is somewhat bad
+- no validations on `Image` changesets besides the required fields
+- `[...]`
 
-However, it should make a good demo app as it has almost everything - a web app, some need for a database, static data taht has to be stored and served from somewhere. All the good stuff.
+The list is not complete, but one can always find things to improve. for example, by just supporting another `type`, e.g. "Doggy" in addition to "Kitty", we could double the image capacity.
+
+Nevertheless, it should make a good demo app as it has almost everything - a web app, some need for a database, static data that has to be stored and served from somewhere. All the good stuff.
 
 ## Conclusion
 
-[In the next part]({{< ref "using-phoenix-with-docker-part-3-containerization.md" >}}), we'll look into finally using `docker` to gain containers for our project and use `docker compose` to orchestrate our system.
+[In the next part]({{< ref "using-phoenix-with-docker-part-3-containerization.md" >}}), we'll finally look into using `docker` to gain containers for our project and use `docker compose` to orchestrate our system.
 
 If you already forgot what this was all about, [check out part 1 to get a re-introduction]({{< ref "using-phoenix-with-docker-part-1-introduction.md">}}).
 
