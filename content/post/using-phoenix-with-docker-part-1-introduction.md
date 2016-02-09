@@ -29,7 +29,7 @@ A good measure of a new language - to me - therefore would be how strongly you h
 
 Introduce Elixir. Elixir runs on the [Erlang](https://www.wikiwand.com/en/Erlang_(programming_language)) VM called BEAM. Being almost as old as myself (the first version of it was released in 1986), it's one of the pieces of software that have been around so long it's practically optimized to a degree that no recently created project is able to attain.
 
-The fans usually pull out the [WhatsApp example here](http://www.wired.com/2015/09/whatsapp-serves-900-million-users-50-engineers/). That on one hand has to do with the Erlang VM being extremly well optimized and well maintained and on the other hand the [network stack of FreeBSD](https://www.quora.com/How-is-FreeBSDs-network-stack-superior-to-that-of-Linux), which is its own kind of animal. I confess I never looked into it, but I hear the praise from over the hills.
+The fans usually pull out the [WhatsApp example here](http://www.wired.com/2015/09/whatsapp-serves-900-million-users-50-engineers/). On one hand this has to do with the Erlang VM being extremly well optimized and well maintained. On the other hand the [network stack of FreeBSD](https://www.quora.com/How-is-FreeBSDs-network-stack-superior-to-that-of-Linux) is a beast by itself. I confess I never looked into it, but I hear the praise from over the hills.
 
 Using Erlang is a good idea apparently and Elixir makes it easier, because it packages it all in a more Ruby-esque, more "friendly" syntax. We can relate and do the same thing we always do - building our applications. Can't be that different from the JVM, can it now? We got used to [jRuby](https://jruby.org) and I think that one guy in the basement is still using and maintaining his own fork of [IronRuby](https://ironruby.net). He also doesn't shave anymore.
 
@@ -39,7 +39,7 @@ But since we're doing web development, let's take a look at [Phoenix](http://pho
 
 ## Using docker
 
-Before diving into preparing a demo project let me quickly express that I find deployment of Phoenix/Elixir somewhat inconvenient. With Rails, you just use [Heroku](https://heroku.com). That can be hard on your budget though (or the Asset pipeline made your slug size explode), so you might go on and deploy on your own machines, deciding to hire a DevOps guy and then silently go on crying how hard actual scalable deployment is and that it shouldn't come as an afterthought.
+Before diving into preparing a demo project let me quickly express that I find deployment of Phoenix/Elixir somewhat inconvenient. With Rails, you just use [Heroku](https://heroku.com). That can be hard on your budget though (or on your mental health, as the Asset pipeline made your slug size explode again). So you might go on and deploy on your own machines, deciding to hire a DevOps guy in the process and then silently weep how hard actual scalable deployment is and that it shouldn't come as an afterthought.
 
 At the time of writing, Elixir has less convenient options (from what I can tell), so a containerization might be a solution to this problem. After all, this approach will shift responsibility for having the dependencies installed to you instead of relying on your administrator to do so.
 
@@ -79,7 +79,7 @@ The project should work as a tech demo to provide and explain the following comp
 - serving images in a somewhat efficient way
 - a queue solution with job workers
 
-The project can be grabbed from its repository. If anyone wants a more detailed walktrough, I'll consider making a separate post about it.
+The project can be grabbed from [its repository](https://github.com/floriank/kitteh-phoenix) if you are interested.
 
 Long story short: We're going to use these containers:
 
@@ -92,4 +92,4 @@ This is a minimal setup and one could toy around using `nginx` for serving the i
 
 ## Continuing
 
-[In the next part]({{< ref "using-phoenix-with-docker-part-2-containerization" >}}), we'll look into the application stack and discuss Phoenix a bit more in depth. If you are more impatient, consider [skipping directly to part 3]({{< ref "using-phoenix-with-docker-part-3-containerization" >}}) to see how the `Dockerfile`s of our components look like and what the `docker compose` process will be. Or if it even works.
+[In the next part]({{< ref "using-phoenix-with-docker-part-2-implementation.md" >}}), we'll look into the application stack and discuss Phoenix a bit more in depth. If you are more impatient, consider [skipping directly to part 3]({{< ref "using-phoenix-with-docker-part-3-containerization.md" >}}) to see how the `Dockerfile`s of our components look like and what the `docker compose` process will be. Or if it even works.
