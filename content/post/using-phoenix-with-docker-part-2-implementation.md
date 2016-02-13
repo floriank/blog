@@ -451,6 +451,8 @@ The list is not complete, but one can always find things to improve. For example
 
 Nevertheless, it should make a good demo app as it has almost everything - a web app, some need for a database, static data that has to be stored and served from somewhere. All the good stuff.
 
+there is one major problem when it comes to Live reload. I personally am not a fan of such a feature, but it is included in Phoenix by default. I had to [disable it in dev](https://github.com/floriank/kitteh-phoenix/commit/9224dcf92a42a26685ac7fc3e9f019095c0d99e0), since it interfered with the upload feature. the uploaded into a folder that is live reloaded apparently wasn't the best of my ideas.
+
 ## Conclusion
 
 [In the next part]({{< ref "using-phoenix-with-docker-part-3-containerization.md" >}}), we'll finally look into using `docker` to gain containers for our project and use `docker compose` to orchestrate our system.
