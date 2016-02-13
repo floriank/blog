@@ -1,7 +1,7 @@
 +++
 date = "2016-02-05T12:21:24+01:00"
 draft = true
-title = "Using phoenix with docker, Part 1: Introduction"
+title = "Using Phoenix with docker, Part 1: Introduction"
 categories = [
     "development"
 ]
@@ -23,7 +23,7 @@ Probably not.
 
 Show me a new "advanced" technology everyone praises, I'll show you at least one developer who is able to screw things up in your project with it. 
 
-A good measure of a new language - to me - therefore would be how strongly you have to stick to the idioms that the language provides to solve your problems. Granted, this requires reflection on one's own side to determine which kind of problems are to be solved. Also, if the technology at hand is the right one to solve them, but that is just me rambling on what programming actually is, beside writing the code.
+A good measure of a new language - to me - therefore would be how strongly you have to stick to the idioms that the language provides to solve your problems. Granted, this requires reflection on one's own side to determine which kind of problems are to be solved. But that is just me rambling on what programming actually is, besides writing the code.
 
 ## Using Phoenix & Elixir
 
@@ -31,7 +31,7 @@ Introduce Elixir. Elixir runs on the [Erlang](https://www.wikiwand.com/en/Erlang
 
 The fans usually pull out the [WhatsApp example here](http://www.wired.com/2015/09/whatsapp-serves-900-million-users-50-engineers/). On one hand this has to do with the Erlang VM being extremly well optimized and well maintained. On the other hand the [network stack of FreeBSD](https://www.quora.com/How-is-FreeBSDs-network-stack-superior-to-that-of-Linux) is a beast by itself. I confess I never looked into it, but I hear the praise from over the hills.
 
-Using Erlang is a good idea apparently and Elixir makes it easier, because it packages it all in a more Ruby-esque, more "friendly" syntax. We can relate and do the same thing we always do - building our applications. Can't be that different from the JVM, can it now? We got used to [jRuby](https://jruby.org) and I think that one guy in the basement is still using and maintaining his own fork of [IronRuby](https://ironruby.net). He also doesn't shave anymore.
+Using Erlang is a good idea apparently and Elixir makes it easier, because it packages it all in a more Ruby-esque, more "friendly" syntax. We can relate and do the same thing we always do - building our applications. Can't be that different from the JVM, can it now? We got used to [jRuby](https://jruby.org).And I think that one gal in the basement is still using and maintaining her own fork of [IronRuby](https://ironruby.net). She does not come to Christmas parties anymore.
 
 Except we cannot - since Elixirs concepts are vastly different from what Ruby can provide you with. And you should keep that in mind - especially when starting out. I highly recommend [Dave Thomas' book here](https://pragprog.com/book/elixir12/programming-elixir-1-2) to start learning Elixir.
 
@@ -41,17 +41,17 @@ But since we're doing web development, let's take a look at [Phoenix](http://pho
 
 Before diving into preparing a demo project let me quickly express that I find deployment of Phoenix/Elixir somewhat inconvenient. With Rails, you just use [Heroku](https://heroku.com). That can be hard on your budget though (or on your mental health, as the Asset pipeline made your slug size explode again). So you might go on and deploy on your own machines, deciding to hire a DevOps guy in the process and then silently weep how hard actual scalable deployment is and that it shouldn't come as an afterthought.
 
-At the time of writing, Elixir has less convenient options (from what I can tell), so a containerization might be a solution to this problem. After all, this approach will shift responsibility for having the dependencies installed to you instead of relying on your administrator to do so.
+At the time of writing, Elixir has less convenient options (from what I can tell), so containerization might be a solution to this problem. After all, this approach will shift responsibility for having the dependencies installed to you instead of relying on your administrator to do so.
 
 **Note**: I am aware that Heroku supports Elixir these days. I have not tried it yet, but my assumption is that not everyone chooses the expensive and convenient lock-in that Heroku provides.
 
 So, I think it would be reasonable to try out some containers for the time being.
 
-## Project Kitteh Uploader
+## Project Kitteh
 
 So, let us prepare something cat related to containerize and deply somewhere.
 
-**Note**: If you have not worked with Phoenix before, there are [some excellent tutorials](https://blog.codecentric.de/en/2016/01/elixir-phoenix-couchdb-introduction/), as [well as documentation](http://hexdocs.pm/phoenix/Phoenix.html). Naming can be a bit confusing, but when you're used to the gem names in the Ruby ecosystem, my best bet is that you can take it.
+**Note**: If you have not worked with Phoenix before, there are [some excellent tutorials](https://blog.codecentric.de/en/2016/01/elixir-phoenix-couchdb-introduction/), as [well as documentation](http://hexdocs.pm/phoenix/Phoenix.html). Naming can be a bit confusing, but when you're used to the gem names in the Ruby ecosystem, my best bet is that you can get used to it.
 
 Let's do it:
 
@@ -67,8 +67,8 @@ The project will do the following:
 
 So, in practise, this should look as follows:
 
-1. User comes to url, uploads an image and get's redirected to `/CuteDomesticSavannahKitteh`
-2. User can now use `/TinyCuteDomesticSavannahKitteh`, `/LargeCuteDomesticSavannahKitteh` and `/MonstrousCuteDomesticSavannahKitteh` to get the resized versions as well.
+1. User comes to url, uploads an image and get's redirected to `/CuteDomesticSavannahKitty`
+2. User can now use `/TinyCuteDomesticSavannahKitty`, `/LargeCuteDomesticSavannahKitty` and `/MonstrousCuteDomesticSavannahKitty` to get the resized versions as well.
 
 **Please note** that I am intentionally - and shamelessly - stealing the URL naming strategy from [gfycat](https://gfycat.com/).
 
@@ -83,12 +83,11 @@ The project can be grabbed from [its repository](https://github.com/floriank/kit
 
 Long story short: We're going to use these containers:
 
-- PostgreSQL for database
-- PostgreSQL for database persistance
+- PostgreSQL for database (one for postgres, one for persitant storage)
 - Web Container running our Phoenix application
 - Queue container running our Phoenix application to process the thumbnails
 
-This is a minimal setup and one could toy around using `nginx` for serving the images, but let's keep it simpler for now.
+Maybe we should also provide static asset serving by using `nginx` for the images and not directly use the web stack to do so.
 
 ## Continuing
 
