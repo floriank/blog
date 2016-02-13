@@ -9,6 +9,8 @@ categories = [
 
 _This is part one of a three part series_: **Part 1** - [Part 2]({{< ref "using-phoenix-with-docker-part-2-implementation.md">}}) - [Part 3]({{< ref "using-phoenix-with-docker-part-3-containerization.md" >}})
 
+_This part is an introduction to the project - consider [skipping to part 2]({{< ref "using-phoenix-with-docker-part-2-implementation.md">}}) if you do want some code_
+
 A [colleague of mine](https://kholbekj.surge.sh) will not shut up about [this](https://elixir-lang.org).
 
 Working at a company using Ruby for day to day work, Elixir seems pretty appealing. And since I tried out [Haskell](http://learnyouahaskell.com/) some years ago it seems kind of familiar. Especially since I didn't really grasp the advantage of function pipelines and data structures back then. Also, working with PHP was so convenient at the time. I do recommend checking out Haskell at least once in your life, even though it's (visible) presence in modern web development is slim.
@@ -31,7 +33,7 @@ Introduce Elixir. Elixir runs on the [Erlang](https://www.wikiwand.com/en/Erlang
 
 The fans usually pull out the [WhatsApp example here](http://www.wired.com/2015/09/whatsapp-serves-900-million-users-50-engineers/). On one hand this has to do with the Erlang VM being extremly well optimized and well maintained. On the other hand the [network stack of FreeBSD](https://www.quora.com/How-is-FreeBSDs-network-stack-superior-to-that-of-Linux) is a beast by itself. I confess I never looked into it, but I hear the praise from over the hills.
 
-Using Erlang is a good idea apparently and Elixir makes it easier, because it packages it all in a more Ruby-esque, more "friendly" syntax. We can relate and do the same thing we always do - building our applications. Can't be that different from the JVM, can it now? We got used to [jRuby](https://jruby.org).And I think that one gal in the basement is still using and maintaining her own fork of [IronRuby](https://ironruby.net). She does not come to Christmas parties anymore.
+Using Erlang is a good idea apparently and Elixir makes it easier, because it packages it all in a more Ruby-esque, more "friendly" syntax. We can relate and do the same thing we always do - building our applications. Can't be that different from the JVM, can it now? We got used to [jRuby](https://jruby.org). And I think that one gal in the basement is still using and maintaining her own fork of [IronRuby](https://ironruby.net). She does not come to Christmas parties anymore.
 
 Except we cannot - since Elixirs concepts are vastly different from what Ruby can provide you with. And you should keep that in mind - especially when starting out. I highly recommend [Dave Thomas' book here](https://pragprog.com/book/elixir12/programming-elixir-1-2) to start learning Elixir.
 
@@ -85,9 +87,7 @@ Long story short: We're going to use these containers:
 
 - PostgreSQL for database (one for postgres, one for persitant storage)
 - Web Container running our Phoenix application
-- Queue container running our Phoenix application to process the thumbnails
-
-Maybe we should also provide static asset serving by using `nginx` for the images and not directly use the web stack to do so.
+- nginx for serving static assets and uploaded images
 
 ## Continuing
 
