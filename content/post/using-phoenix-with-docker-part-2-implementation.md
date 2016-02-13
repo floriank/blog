@@ -11,11 +11,11 @@ _This is part two of a three part series_: [Part 1]({{< ref "using-phoenix-with-
 
 ## Installation
 
-Before we start, please make sure you install Elixir and Phoenix. If you do not care or have already installed both, you can skipt this part.
+Before we start, please make sure you install Elixir and Phoenix. If you do not care or have already installed both, you can skip the next section.
 
 ### Elixir
 
-Installing Elixir is hopefully straight forward to you - it's **not** as convenient as just typing
+Installing Elixir is actually not too difficult - it's **not** as convenient as just typing
 
 ```bash
 sudo apt-get install elixir
@@ -45,7 +45,7 @@ If you need more detail, [consider visiting the Phoenix docs](http://www.phoenix
 mix phoenix.new kitteh
 ```
 
-should create a new Phoenix project for you in the folder `./kitteh`. When asked to install dependencies, you should probably say yes, altough it's irrelevant, since we're not going to build a complex frontend.
+should create a new Phoenix project for you in the folder `./kitteh`. When asked to install dependencies, you should probably say yes, although it's irrelevant since we're not going to build a complex frontend (but there is additional css, [I promise](https://github.com/floriank/kitteh-phoenix/blob/05-resizing-cats/web/static/css/style.css)).
 
 You should end up with something like this:
 
@@ -66,7 +66,7 @@ You should end up with something like this:
 └── web
 ```
 
-If you do not wish to do anything yourself, I prepared a [repository here](https://github.com/floriank/kitteh-uploader). You may use the tag `01-lets-go` [to get the initial codebase](https://github.com/floriank/kitteh-phoenix/tree/01-lets-go). 
+If you do not wish to do anything yourself, I prepared a [repository here](https://github.com/floriank/kitteh-phoenix). You may use the tag `01-lets-go` [to get the initial codebase](https://github.com/floriank/kitteh-phoenix/tree/01-lets-go). 
 
 ## Scaffolding
 
@@ -111,7 +111,7 @@ Woah.
 
 Hold your horses. All I wanted was a simple controller with an action or two.
 
-So, let's rollback the changes. There is no convenient way to this yet:
+So, let's rollback the changes. There is no convenient way (i.e. reverse generators) to do this yet, so
 
 ```bash
 git clean -f && rm -rf web/templates/images
@@ -125,13 +125,11 @@ Let's fall back to the already generated `PageController`. It already has an act
 
 At the moment it renders a file called `index.html.eex` ([link for the lazy](https://github.com/floriank/kitteh-phoenix/blob/lets-go/web/templates/page/index.html.eex)). It constitutes a demo partial that together with the `app.html.eex` ([this one here](https://github.com/floriank/kitteh-phoenix/blob/lets-go/web/templates/layout/app.html.eex)) forms a complete webpage at the `/` route. 
 
-We can look at it on the locally running instance at [localhost](http://localhost:4000).
+We can look at it on the locally running instance at [localhost](http://localhost:4000) by executing
 
 ```bash
 iex -S mix phoenix.server
 ```
-
-will start an instance for us.
 
 Neat.
 
@@ -141,7 +139,7 @@ This should be easy.
 
 Phoenix includes [Bootstrap](https://getbootstrap.com) by default. I could disagree with that, but then again, using Bootstrap is not to inconvenient.
 
-The Phoenix team apparently decided to delegate the frontend choices to the userbase. A wise choice in the short run, als the whole frontend sector is quite fragmented at the moment (early 2016).
+The Phoenix team apparently decided to delegate the frontend choices to the userbase. A wise choice in the short term, as the whole frontend sector is quite fragmented at the moment (early 2016).
 
 That being said, replacing everything in `index.html.eex` with
 
@@ -168,17 +166,13 @@ That being said, replacing everything in `index.html.eex` with
 
 should do the trick. 
 
-No, we are not using the [form builders that Phoenix provides](http://hexdocs.pm/phoenix_html/Phoenix.HTML.Form.html), but feel free to read up on them. 
-
-They're very changeset-centric at the moment and I do miss the equivalents for just building tags. We can just use plain HTML instead.
-
-I also changed the `app.html.eex` a bit. 
+No, we are not using the [form builders that Phoenix provides](http://hexdocs.pm/phoenix_html/Phoenix.HTML.Form.html), but feel free to read up on them.  We can just use plain HTML instead.
 
 If that is all too much frontend stuff for you, i suggest you look at the `02-simple-frontend` [tag here](https://github.com/floriank/kitteh-phoenix/tree/02-simple-frontend).
 
 ## New routes
 
-We defined a `/upload` path that the form uses, but this route is nowhere to be found. Let's add it:
+We defined an `/upload` path that the form uses, but this route is nowhere to be found. Let's add it:
 
 ```elixir
 # see web/router.ex
@@ -206,7 +200,7 @@ Kids, **read your documentation** before heading into battle.
 
 ## Reading the documentation
 
-Turns out, the Phoenix people do provide something to do file uploads. They utilize a module called `Plug.Upload`, which is part of the underlying `Plug` module. 
+Turns out, the Phoenix people do provide something to do file uploads. 
 
 That means we can actually use the form builders after all since we're going the changeset route.
 
@@ -221,11 +215,11 @@ mix phoenix.gen.model Image original_name:string url:string size:integer
 
 and migrate the database:
 
-```
+```bash
 mix ecto.create && mix ecto.migrate
 ```
 
-If this fails for you, make sure you have a valid configuration for you database. To configure your database, see you local `config/dev.exs` (see [here](https://github.com/floriank/kitteh-phoenix/blob/02-simple-frontend/config/dev.exs)).
+If this fails for you, make sure you have a valid configuration for you database. To configure your database, see your local `config/dev.exs` (see [here](https://github.com/floriank/kitteh-phoenix/blob/02-simple-frontend/config/dev.exs)).
 
 So, finally, we can create a changeset in the controller and use it in the template:
 
@@ -257,13 +251,13 @@ The `@changeset` is introduced and passed to the view in the controller:
 # [...]
 ```
 
-If all goes well, this should render our frontend again with what we previously had. I also snuck in the missing Button for submitting the form. Please note that in order to actually use the line
+If all goes well, this should render our frontend again. I also snuck in the missing Button for submitting the form. Please note that in order to actually use the line
 
 ```erb
 <%= file_input f, :file, required: true %>
 ```
 
-a virtual `file` attribute has to exist in the `Image` model. 
+a [virtual](https://github.com/floriank/kitteh-phoenix/blob/03-actually-read-the-docs/web/models/image.ex#L8) `file` attribute has to exist in the `Image` model. 
 
 If this was all just ramblings of a mad developer for you, you can also check out the tag `03-actually-read-the-docs` [here](https://github.com/floriank/kitteh-phoenix/tree/03-actually-read-the-docs).
 
@@ -298,7 +292,7 @@ Phoenix will give us the file as a `Plug.Upload` struct in our `params` to the n
 
 Thinking like a Rails developer, the fat model approach comes to mind. Let's put all the logic for this into a model and let the controller action pass in the params. Be done with it, move on. Have a beer maybe.
 
-This is not viable here, since Elixir ultimately does not care where your function lives. _There are no models, just functions and structs_.
+This is not viable here, since Elixir ultimately does not care where your functions live. _There are no models, just functions and structs_.
 
 I decided in favour of a more controller based approach. The controller will do the the copying and transform the file input into a usable `params` map:
 
@@ -342,7 +336,7 @@ Depending on whether the copying was successful, we either get a proper `params`
 
 Note that `target_path` actually behaves differently from what you would expect. In Phoenix, you do not find the same behaviour as with Rails' `Rails.root`. 
 
-For now, we need a target path that lives within our application and we can access. But our codebase will be compiled (in contrast to a Ruby codebase), so we're cannot be sure where our bytecode ends up (_Hint_: It's in the `./_build` folder). 
+For now, we need a target path that lives within our application and we can access. But our codebase will be compiled (in contrast to a Ruby codebase), so we cannot be sure where our bytecode ends up (_Hint_: It's in the `./_build` folder). 
 
 We can do this though:
 
@@ -364,7 +358,7 @@ The shorthand generated for the kitty is generated via `Image.generate_unique_na
 
 **Note**: This has no safety measures - if all combinations of the attributes are used up, our database is "full" and we are screwed.
 
-After the image is persisted we redirect to `show`. Additionally, an `ImageController` is introduced with a `show` action [here](https://github.com/floriank/kitteh-phoenix/blob/04-enable-uploading/web/controllers/image_controller.ex#L6) to actually serve up the image for now. This is intermediary - ultimately, we'll not use Phoenix to serve assets in production.
+After the image is persisted we redirect to `show`. Additionally, an `ImageController` is introduced with a `show` action [here](https://github.com/floriank/kitteh-phoenix/blob/04-enable-uploading/web/controllers/image_controller.ex#L6) to actually serve up the image for now. This is intermediary - ultimately, we'll not use Phoenix to serve assets in "production".
 
 If all goes well, the upload should work and the original image should be served under a memorable shorthand.
 
@@ -384,21 +378,76 @@ In a (newer) Rails environment, we could utilize anything that fulfills the inte
 
 Not an option here though. There are some solutions to queues and background jobs, but we are on the Erlang VM anyway, so we can utilize the technology available to us. After all, BEAM processes are cheap and lightweight.
 
-[GenServer](http://elixir-lang.org/getting-started/mix-otp/genserver.html) might be the answer here. Besides reading the documentation, Daniel Berkompas has done a very excellent job of explaining it in [his LearnElixir.tv episodes](https://www.learnelixir.tv/episodes). It's paid content but worth every dollar and he's still expanding the episode list. While you're at it, check out [his blog](http://blog.danielberkompas.com/).
+[GenServer](http://elixir-lang.org/getting-started/mix-otp/genserver.html) might be the answer here. But actually having a long running process in the background that we can use as a service might be overkill here.
 
-If this is all the same to you and you could not care less how the images are generated exactly, check out the tag `05-resizing-cats` [here](https://github.com/floriank/kitteh-phoenix/tree/05-resizing-cats).
+Let's use `Task` instead. `Task` is a wrapper around Elixirs `spawn` function and can be used for a [multitude of things](http://elixir-lang.org/docs/v1.1/elixir/Task.html) that are actually more advanced than we do right here, right now.
+
+Looking into [the code](https://github.com/floriank/kitteh-phoenix/commit/3652cbc3287e7fd832e7ad37a0acd5550ea0b36d#diff-3f35d230596bca22de76cff4dd188e4cR82):
+
+```elixir
+defp create_sizes(image) do
+  sizes = %{ "Tiny" => "90", "Large" => "300", "Monstrous" => "600" }
+  original_file = image.path
+  Enum.each sizes, fn({ label, size }) ->
+    Task.start fn ->
+      name = label <> image.generated_name
+      file_params = resize(image)
+        |> copy_file name
+      changeset = Image.changeset(%Image{}, file_params)
+        |> Repo.insert
+    end
+  end
+end
+```
+
+Using `Task.start` creates a subprocess that is *not linked* to the current process. Process linking here is not strictly necessary, as this is implemented as a fire-and-forget strategy. In contrast to `Task.start_link`, we're not linking our main process (`kitteh`) to the new process. In case it crashes, we do not want to tear down our application (process) as well.
+
+**Note**: I had some problems finding out on how to match function call in using `Enum.each` against the result of the map. The resulting argument is matched against a tuple. Might be trivial, but just in case you were wondering.
+
+This has the _notable_ disadvantage every fire-and-forget strategy has - we do not know if we actually create the images. Good enough for this application, but for something production-ready, one should look for some bidirectional communication. Just in case, you know, you maybe want to connect these images to one another.
+
+## Resizing
+
+Resizing images is something one should probably be too lazy to implement oneself. Enter `mogrify` - it is [a wrapper library](https://github.com/route/mogrify) for ImageMagick, providing us with functions for handling image-resizing.
+
+We should make a mental note here as we introduce a hard dependency for our docker containers later on. Any container that we want to create for this application now has to provide this dependency.
+
+With [another commit](https://github.com/floriank/kitteh-phoenix/commit/b7724faae9725e127f33734bcfaf2eb0ed79a101), the resize function is introduced:
+
+```elixir
+defp resize(image, name, size) do
+  new_path = target_path <> name <> Path.extname(image.path)
+  new_image = open(image.path) |> copy |> resize(size) |> save(new_path)
+  %{
+    generated_name: name,
+    token: String.downcase(name),
+    path: new_path,
+    original_name: image.original_name,
+    content_type: image.content_type,
+    size: image.size
+  }
+end
+```
+
+This should create all the resized versions. We can also utilize the builtin `Mogrify.copy` function to skip manual copying as we did for the initial image. We end up with returning so params we can use to create another changeset and insert everything. neat, the rest of the system should now work for the resized images as well.
+
+**Note**: Somewhere around this point I noticed [a screw up in the router](https://github.com/floriank/kitteh-phoenix/commit/b7724faae9725e127f33734bcfaf2eb0ed79a101#diff-8c237d3166e777cbb3d401efc40b1c62R19) as matching order was off. This lead to a redirect to `/` after the initial image had been created.
+
+At this point, our image uploader should be feature complete. Altough being the duct-tape ghetto version it now is, it should provide a good bassis to play around with in the next part.
+ 
+If this is all the same to you and you could not care less about how the images are generated and stored exactly, check out the tag `05-resizing-cats` [here](https://github.com/floriank/kitteh-phoenix/tree/05-resizing-cats).
 
 ## Problems of the demo app
 
 This demo application has quite a few problems, some of them already discussed, some of them a little less obvious:
 
-- **no tests** - this is a biggie and nothing to sweep under the rug. Since this is not intended for production purposes, I can live with it.
+- **no tests** - this is a biggie and nothing to sweep under the rug. Since this is not intended for production purposes, we sweep it under the rug
 - the amount of images uploaded is limited to the combination limit of the seed data
 - Naming is somewhat bad
 - no validations on `Image` changesets besides the required fields
 - `[...]`
 
-The list is not complete, but one can always find things to improve. for example, by just supporting another `type`, e.g. "Doggy" in addition to "Kitty", we could double the image capacity.
+The list is not complete, but one can always find things to improve. For example, by just supporting another `type`, e.g. "Doggy" in addition to "Kitty", we could double the image capacity. We could also make sure that all images have been created using `Task.await`.
 
 Nevertheless, it should make a good demo app as it has almost everything - a web app, some need for a database, static data that has to be stored and served from somewhere. All the good stuff.
 
