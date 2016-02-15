@@ -191,7 +191,7 @@ The database images used at the moment utilize [the official postgres image](htt
 
 __Tip__: Read environment variables into that configuration like this:
 
-```elixir
+```ruby
 # ./config/prod.secret.exs
 # [...]
 # Configure your database
@@ -286,7 +286,7 @@ Inside the container, the current `uploads` folder resides within `_build/prod/l
 
 So let's change that first. Luckily, we only have to change the `target_path` function in the `page_controller.ex`:
 
-```elixir
+```ruby
 # ./web/controllers/page_controller.ex
 # [...]
   defp target_path do
@@ -361,7 +361,7 @@ should yield a list of images. The `nginx` container itself is exposed at port `
 
 So, assuming a file named `LargeSuperbYellowTurkishAngora.jpeg` actually exists in the data container a simple 
 
-```
+```bash
 http get http://localhost:4001/LargeSuperbYellowTurkishAngora.jpeg
 ```
 
@@ -369,7 +369,7 @@ should give the image back to you. If you are not using [httpie](https://github.
 
 So, for now, we can use this and modify our code, specifically the view that renders the image url (called `asset_url`):
 
-```elixir
+```ruby
 # /web/views/page_view.ex
   def asset_url(image) do
     "/img/" <> image.token
@@ -380,10 +380,10 @@ One of the drawbacks of not having an asset pipeline similar to Rails is that we
 
 But that will not stop us, even if it means hardcoding values:
 
-```elixir
+```ruby
 # /web/views/page_view.ex
   def asset_url(image)
-    "http://localhost:4001/" <> Path.basename(image.path)
+    "http://localhost:4001/" <> Path.basename(image.path) 
   end
 ```
 
@@ -457,7 +457,7 @@ should yield our JavaScript. Same goes for our css.
 
 We also need to update our `prod.exs` environment to make the manifest file known:
 
-```elixir
+```ruby
 # /config/prod.exs
   config :kitteh, Kitteh.Endpoint,
     http: [port: {:system, "PORT"}],
@@ -478,7 +478,7 @@ The asset paths in `app.html.eex` have to be updated to make this work with the 
 
 This requires a small addition to `prod.exs` (`static_url`):
 
-```elixir
+```ruby
 # /config/prod.exs
 config :kitteh, Kitteh.Endpoint,
   http: [port: {:system, "PORT"}],

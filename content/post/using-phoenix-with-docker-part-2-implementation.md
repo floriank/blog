@@ -110,7 +110,7 @@ This might be a bit counter-intuitive (it is to me) - but generating just a cont
 
 Looking at our newly generated controller, we notice that it has been filled with all kind of good stuff:
 
-```elixir
+```ruby
 defmodule Kitteh.ImageController do
   use Kitteh.Web, :controller
 
@@ -205,7 +205,7 @@ If that is all too much frontend stuff for you, i suggest you look at the `02-si
 
 We defined an `/upload` path that the form uses, but this route is nowhere to be found. Let's add it:
 
-```elixir
+```ruby
 # see web/router.ex
 # [...]
   scope "/", Kitteh do
@@ -270,7 +270,7 @@ So, finally, we can create a changeset in the controller and use it in the templ
 
 The `@changeset` is introduced and passed to the view in the controller:
 
-```elixir
+```ruby
 # web/controllers/page_controller.ex
 # [...]
   alias Kitteh.Repo
@@ -312,7 +312,7 @@ We'll skip this here and assume that the file given is something we want.
 
 Phoenix will give us the file as a `Plug.Upload` struct in our `params` to the newly created `upload` function in `PageController`:
 
-```elixir
+```ruby
 # web/controllers/page_controller.ex
 # [...]
 
@@ -329,7 +329,7 @@ This is not viable here, since Elixir ultimately does not care where your functi
 
 I decided in favour of a more controller based approach. The controller will do the the copying and transform the file input into a usable `params` map:
 
-```elixir
+```ruby
 # web/controllers/page_controller.ex
 # [...]
   def upload(conn, %{ "image" => %{ "file" => file } }) do
@@ -345,7 +345,7 @@ I decided in favour of a more controller based approach. The controller will do 
 
 The copy file function acutally does the more "heavy lifting":
 
-```elixir
+```ruby
 defp copy_file(file) do
   extension = Path.extname(file.filename)
   target = target_path <> name <> extension
@@ -373,7 +373,7 @@ For now, we need a target path that lives within our application and we can acce
 
 We can do this though:
 
-```elixir
+```ruby
 Application.app_dir(:kitteh, "priv")
 ```
 
@@ -420,7 +420,7 @@ Let's use `Task` instead. `Task` is a wrapper around Elixirs `spawn` function an
 
 Looking into [the code](https://github.com/floriank/kitteh-phoenix/commit/3652cbc3287e7fd832e7ad37a0acd5550ea0b36d#diff-3f35d230596bca22de76cff4dd188e4cR82):
 
-```elixir
+```ruby
 defp create_sizes(image) do
   sizes = %{ "Tiny" => "90", "Large" => "300", "Monstrous" => "600" }
   original_file = image.path
@@ -451,7 +451,7 @@ We should make a mental note here as we introduce a hard dependency for our dock
 
 With [another commit](https://github.com/floriank/kitteh-phoenix/commit/b7724faae9725e127f33734bcfaf2eb0ed79a101), the resize function is introduced:
 
-```elixir
+```ruby
 defp resize(image, name, size) do
   new_path = target_path <> name <> Path.extname(image.path)
   new_image = open(image.path) |> copy |> resize(size) |> save(new_path)
