@@ -64,7 +64,7 @@ So, I think it would be reasonable to try out some containers for the time being
 <a name="project-kitteh"></a>
 ## Project Kitteh
 
-So, let us prepare something cat related to containerize and deply somewhere.
+So, let us prepare something cat related to containerize and deploy somewhere.
 
 **Note**: If you have not worked with Phoenix before, there are [some excellent tutorials](https://blog.codecentric.de/en/2016/01/elixir-phoenix-couchdb-introduction/), as [well as documentation](http://hexdocs.pm/phoenix/Phoenix.html). Naming can be a bit confusing, but when you're used to the gem names in the Ruby ecosystem, my best bet is that you can get used to it.
 
