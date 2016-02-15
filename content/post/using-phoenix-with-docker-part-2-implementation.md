@@ -32,7 +32,6 @@ _This is part two of a three part series_: [Part 1]({{< ref "using-phoenix-with-
 
 <!-- /MarkdownTOC -->
 
-
 <a name="installation"></a>
 ## Installation
 

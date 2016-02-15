@@ -23,8 +23,8 @@ __Note__: I am using the latest `docker-compose` and the latest `docker-engine` 
   - [Creating the volume container](#creating-the-volume-container)
   - [Docker 1.10](#docker-110)
   - [Configuring nginx](#configuring-nginx)
-  - [Running](#running)
-  - [Assets & images](#assets--images)
+  - [Running the containers](#running-the-containers)
+  - [Assets and images](#assets-and-images)
 - [Looking back](#looking-back)
   - [Cleaning up](#cleaning-up)
 - [Conclusion](#conclusion)
@@ -206,9 +206,9 @@ config :kitteh, Kitteh.Repo,
 
 For our use case this can stay hard coded as this file is [not checked into git anyway](https://github.com/floriank/kitteh-phoenix/blob/06-dockerizing-kitties/.gitignore#L28). It might be different if one would choose to utilize a CI.
 
-However, we need to make sure that the database is reachable, since we need to migrate it (the database image actually already contains a database named after the environment [variable set here](https://github.com/floriank/kitteh-phoenix/blob/06-dockerizing-kitties/docker-compose.yml#L7) - come to think of it, it should probabaly [be the same as in the configuration](https://github.com/floriank/kitteh-phoenix/commit/07146c2b2c0a141d98ca821856802dacf7a7b075))
+However, making sure that the database is reachable is key, since we need to migrate it (the database image actually already contains a database named after the environment [variable set here](https://github.com/floriank/kitteh-phoenix/blob/06-dockerizing-kitties/docker-compose.yml#L7) - come to think of it, it should probably [be the same as in the configuration](https://github.com/floriank/kitteh-phoenix/commit/07146c2b2c0a141d98ca821856802dacf7a7b075))
 
-__Note__: I encountered some problems when trying to use the `$POSTGRES_DB` variable. for some reason it always fell back to the `$POSTGRES_USER`. I have not yet figured out why. These problems only occured while using the version 1 of the compose configuration.
+__Note__: I encountered some problems when trying to use the `$POSTGRES_DB` variable. for some reason it always fell back to the `$POSTGRES_USER`. I have not yet figured out why. These problems _only_ occured while using the version 1 of the compose configuration.
 
 Long story short, if we run 
 
@@ -298,8 +298,6 @@ So let's change that first. Luckily, we only have to change the `target_path` fu
   end
 ```
 
-Unfortunately, we cannot use a guard clause here, as we cannot invoke `Mix.env` inside a guard clause.
-
 We'll create another container in our `docker-compose.yml` that is built from scratch:
 
 ```yaml
@@ -313,7 +311,7 @@ assets:
 
 If everything went well, the images should be preserved between container restarts.
 
-We can now create an nginx image. We're going to use a custom Dockerfile to do so - we can store it alongside the codebase.
+We can now create an nginx docker image. We're going to use a custom Dockerfile to do so - we can store it alongside the codebase.
 
 <a name="docker-110"></a>
 ### Docker 1.10
@@ -331,8 +329,8 @@ The updated configuration can be found [in this commit](https://github.com/flori
 
 I went with a super simple [nginx configuration file](https://github.com/floriank/kitteh-phoenix/commit/080baab1abe78f2d3f508c0b3eede7c6182a0d09), which is bogus, but should work nonetheless.
 
-<a name="running"></a>
-### Running
+<a name="running-the-containers"></a>
+### Running the containers
 
 A simple 
 
@@ -342,8 +340,8 @@ docker-compose up
 
 should bring up our creation. I also tagged [this point of development for your convenience if you do not wish to code along](https://github.com/floriank/kitteh-phoenix/tree/07-composing-kittehs).
 
-<a name="assets--images"></a>
-### Assets & images
+<a name="assets-and-images"></a>
+### Assets and images
 
 Wait, what about assets? We still get something along the lines of
 
@@ -359,7 +357,7 @@ And what about actually serving the images? With out current setup, the `nginx` 
 docker-compose run nginx ls -l /var/uploads
 ```
 
-should yield a list of images (if the upload actually worked). The `nginx` container itself is expsed at port 4001 - thanks to the [configuration yaml](https://github.com/floriank/kitteh-phoenix/blob/080baab1abe78f2d3f508c0b3eede7c6182a0d09/docker-compose.yml#L24). 
+should yield a list of images. The `nginx` container itself is exposed at port `4001` - thanks to the [configuration yaml](https://github.com/floriank/kitteh-phoenix/blob/080baab1abe78f2d3f508c0b3eede7c6182a0d09/docker-compose.yml#L24). 
 
 So, assuming a file named `LargeSuperbYellowTurkishAngora.jpeg` actually exists in the data container a simple 
 
@@ -369,7 +367,7 @@ http get http://localhost:4001/LargeSuperbYellowTurkishAngora.jpeg
 
 should give the image back to you. If you are not using [httpie](https://github.com/jkbrzt/httpie) yet, I do recommend it!
 
-So, for now, we can use this and modify our code, specifically the view that renders the image url (called `asset_url` at the moment):
+So, for now, we can use this and modify our code, specifically the view that renders the image url (called `asset_url`):
 
 ```elixir
 # /web/views/page_view.ex
@@ -378,9 +376,9 @@ So, for now, we can use this and modify our code, specifically the view that ren
   end
 ```
 
-One of the drawbacks of not having an asset pipeline similar to Rails is that we cannot specify an integrated asset host (that is **not** completely true, as we can easily just reuse an `Application` or environment variable for that). However, it's not as simple as just changeing `config.host` in your `production.rb`. 
+One of the drawbacks of not having an asset pipeline similar to Rails is that we cannot specify an integrated asset host (that is **not** completely true, as we can easily just reuse an `Application` or environment variable for that). However, it's not as simple as just changeing `config.host` in your `production.rb`, as the pipeline is not entangled with the framework.
 
-But that shall not stop us, even if it means hardcoding values:
+But that will not stop us, even if it means hardcoding values:
 
 ```elixir
 # /web/views/page_view.ex
@@ -391,7 +389,7 @@ But that shall not stop us, even if it means hardcoding values:
 
 In a production environment, I would probably assign a real subdomain name, like "images.kitt.eh" or something along these lines.
 
-But rebuilding and restarting the containers should now present the very same image, but served from the nginx container.
+Rebuilding and restarting the containers should now present the very same image, but served from the nginx container.
 
 __Note__: At this point I noticed a flaw in the `Dockerfile` for the main application - Compilation was not done properly, so I had to reintroduce an env variable to [mark production compilation](https://github.com/floriank/kitteh-phoenix/commit/362cb0eae4553c418b4729822429a3d324959cc7).
 
@@ -401,7 +399,7 @@ Phoenix purposefully does not integrate an asset pipeline and instead delegates 
 
 I personally disagree with the choice of brunch - I'd have used webpack myself, but one cannot be too picky when others provide work that is essentially free.
 
-Anyway, we have different options for this:
+Anyway, we have different options for solving the assets problem domain:
 
 1. Reusing the nginx container (and having the assets land on "image.kitt.eh")
 2. Introducing a second nginx container (and introducing "assets.kitt.eh" in proudction)
@@ -427,14 +425,14 @@ It's essentially the same one as for uploads. The `nginx.conf` looks similar as 
 
 I [also updated](https://github.com/floriank/kitteh-phoenix/commit/fa45cac9807a841911bd3d691cdf031fbe50042b) the `docker-compose.yml` accordingly to include the second nginx to serve assets later on.
 
-We run into a problem here: so far we just assumend that all the assets are there, ready to go - however, we cannot run `brunch build --production`, as this is an `npm` dependency. Up until now, we just assumend it was there, as we had it installed anyway. However, a fresh clone of the repo cannot assume that. To keep it a bit shorter, I will omit the steps necessary to make this work, but to give you an idea, here are the options you'd have:
+We run into a problem here: so far we just assumend that all the assets are there, ready to go - however, we cannot run `brunch build --production`, as this is an `npm` dependency. Up until now, we just assumed it was there, as we had it installed anyway. However, a fresh clone of the repo cannot assume that. To keep it a bit shorter, I will omit the steps necessary to make this work, but to give you an idea, here are the options you'd have:
 
 1. Install `nodejs` in the web container (bloating it even more) and then run `npm install` in it (bloating it even more). This might be an option if you want everything self-contained and ready to go after cloning the repo
 2. Live with it and require the user (or a CI for that matter) to have node installed on their system when building the image
 
 I chose option 2 for this exercise and [documented it in the README](https://github.com/floriank/kitteh-phoenix/commit/12c83f235321ae172259072cab8f85012c2cb3a1).
 
-Unfortunately, I found to digest all the assets and then put them into `/var/assets` at buildtime, as this requires all the containers to be up.
+Unfortunately, I found digesting all the assets and then putting them into `/var/assets` at buildtime impossible, as this requires all the containers to be up.
 
 Thereby running
 
@@ -442,7 +440,11 @@ Thereby running
 docker-compose run web mix phoenix.digest -o /var/assets
 ```
 
-is crucical for this to work and can only be done when the containers are running. A solution to this is to invert the dependency and build the separate nginx container with the digested assets in it and then mount its volumes into the web container. However, asset digestion can be done on demand this way - the volume container will just keep the last version of the digested assets.
+is crucical for this to work and can only be done when the containers are running. 
+
+__Note__: A solution to this is to invert the dependency and build the separate nginx container with the digested assets in it, mounting its volumes into the web container later on. 
+
+However, asset digestion can be done on demand this way - the volume container will just keep the last version of the digested assets.
 
 Running the containers now should ideally provide the static assets already:
 
@@ -451,7 +453,7 @@ Running the containers now should ideally provide the static assets already:
 http get http://localhost:4002/js/app-<hash>.js
 ```
 
-should yield our javascript. Same goes for our css.
+should yield our JavaScript. Same goes for our css.
 
 We also need to update our `prod.exs` environment to make the manifest file known:
 
@@ -463,7 +465,7 @@ We also need to update our `prod.exs` environment to make the manifest file know
     cache_static_manifest: "/var/assets/manifest.json"
 ```
 
-We now need to update the asset paths in `app.html.eex` to make this work with the other nginx serving our assets (remember, this would be "assets.kitt.eh") in production:
+The asset paths in `app.html.eex` have to be updated to make this work with the nginx serving our assets (remember, this would be "assets.kitt.eh" in production):
 
 ```html
 <!-- /web/templates/layout/app.html.eex -->
@@ -498,21 +500,21 @@ We have done a lot so far. We [coded a small uploader application]({{< ref "usin
 
 Here is the list of containers used:
 
-1. PostgreSQL for persistance
-2. nginx for serving uploaded images
-3. nginx for serving static assets like JavaScript and CSS
-4. web application container that hold the application
+1. A PostgreSQL for persistance
+2. An nginx for serving uploaded images
+3. A second nginx for serving static assets like JavaScript and CSS
+4. A web application container that holds the application
 
-There are also 3 volume containers that can be used to share data between the containers and provide persistance.
+There are also 3 volume containers that are used to share data between the containers and provide persistance.
 
 <a name="cleaning-up"></a>
 ### Cleaning up
 
 We do have some prolems with the setup as well:
 
-- this might be overkill for such a small application and you should consider bare metal for this setup (or Heroku if you feel so inclined)
-- the web application container is *huge*
-- two nginx are not necessarily better than one
+- This might be overkill for such a small application and you should consider bare metal for this setup (or Heroku if you feel so inclined)
+- The web application container is *huge*
+- Two nginx are not necessarily better than one
 - There is no proper configuration management yet - most of the stuff we need is hardcoded either in our application or the docker files.
 
 In fact, let's clean up some problems right here, right now. Introduce a `.dockerignore` file and add the following list of patterns:
@@ -527,20 +529,20 @@ node_modules/
 
 That reduces the `web` images size **by about 4MB**, as the `node_modules` are not needed in the image. Woah.
 
-The problem here is that we are using a full [Ubuntu image](https://github.com/floriank/kitteh-phoenix/blob/08-serving-static-content/Dockerfile#L1) (which I chose for convenience reasons, like installing via `apt-get`). For procatical purposes we should probably use an [alpine](http://www.alpinelinux.org/)-based image to build our application container.
+The problem here is that we are using a full [Ubuntu image](https://github.com/floriank/kitteh-phoenix/blob/08-serving-static-content/Dockerfile#L1) (which I chose for convenience reasons like installing via `apt-get`). For procatical purposes we should probably use an [alpine](http://www.alpinelinux.org/)-based image to build our application container.
 
-There is also SSL yet, we're purely on HTTP - which is not a production setup I would endorse in 2016.
+There is also SSL yet, we're purely on relying on HTTP - which is not a production setup I would endorse in 2016.
 
-Finally, our main attention should probably also focus on removing items from the codebase in the web container that we do not need - mainly the actual codebase, as Elixir compiles to BEAM code and we would only need that.
+Finally, our main attention should probably also focus on removing items from the codebase in the web container that we do not need - mainly the actual codebase, as Elixir compiles to BEAM code and we would only need that. Just for comparison, we are talking about 18MB in the case of kitteh.
 
 It depends on how much convenience you want - ultimately, reducing tha base image size should be the **first** goal in my opinion.
 
 <a name="conclusion"></a>
 ## Conclusion
 
-If you read this far - thanks! i hope you found the material I provided interesting and you can take something away for your own projects.
+If you read this far - thanks! I hope you found the material I provided interesting and you can take something away for your own projects.
 
-If there is questions for this particular series, you can either write me an email or use [the issues for the project on Github](https://github.com/floriank/kitteh-phoenix/issues). Being not a very skillful Elixir developer, I am always thankful for [Pull Requests](https://github.com/floriank/kitteh-phoenix/pulls) and comments.
+If there are questions for this particular series, you can either write me an email or use [the issues for the project on Github](https://github.com/floriank/kitteh-phoenix/issues). Being not a very skillful Elixir developer, I am always thankful for [Pull Requests](https://github.com/floriank/kitteh-phoenix/pulls) and comments.
 
 You have reached the end of this series. You might be interested in [how everything started]({{< ref "using-phoenix-with-docker-part-1-introduction.md" >}}) and how it [turned out to be implemented after all]({{< ref "using-phoenix-with-docker-part-2-implementation.md" >}}).
 
