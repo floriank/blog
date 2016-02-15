@@ -1,5 +1,5 @@
 +++
-date = "2016-02-05T15:32:22+01:00"
+date = "2016-02-15T15:32:22+01:00"
 draft = true
 title = "Using Phoenix with docker, Part 2: Implementation"
 categories = [
@@ -9,10 +9,36 @@ categories = [
 
 _This is part two of a three part series_: [Part 1]({{< ref "using-phoenix-with-docker-part-1-introduction.md" >}}) - **Part 2** - [Part 3]({{< ref "using-phoenix-with-docker-part-3-containerization.md">}})
 
+# Contents
+
+<!-- MarkdownTOC -->
+
+- [Installation](#installation)
+  - [Elixir](#elixir)
+  - [Phoenix](#phoenix)
+- [Let's go](#lets-go)
+- [Scaffolding](#scaffolding)
+- [Simpler times](#simpler-times)
+- [Providing a "frontend"](#providing-a-frontend)
+- [New routes](#new-routes)
+- [Reading the documentation](#reading-the-documentation)
+- [Handle the file](#handle-the-file)
+  - [Shortcuts](#shortcuts)
+- [Resizing images](#resizing-images)
+  - [GenServer](#genserver)
+- [Resizing](#resizing)
+- [Problems of the demo app](#problems-of-the-demo-app)
+- [Conclusion](#conclusion)
+
+<!-- /MarkdownTOC -->
+
+
+<a name="installation"></a>
 ## Installation
 
 Before we start, please make sure you install Elixir and Phoenix. If you do not care or have already installed both, you can skip the next section.
 
+<a name="elixir"></a>
 ### Elixir
 
 Installing Elixir is actually not too difficult - it's **not** as convenient as just typing
@@ -23,6 +49,7 @@ sudo apt-get install elixir
 
 as it equires the installation of Erlang and the **O**pen **T**elephony **P**rotocol (OTP). A more detailed guide on how to do the installation of Elixir (including the installation of Erlang/OTP [can be found on the homepage](http://elixir-lang.org/install.html) - regardless of your preferred OS-choice. 
 
+<a name="phoenix"></a>
 ### Phoenix
 
 Once you have installed Elixir, it's time to setup Phoenix. This can be done via `hex`, which in turn can be installed via `mix`:
@@ -39,6 +66,7 @@ mix archive.install https://github.com/phoenixframework/archives/raw/master/phoe
 
 If you need more detail, [consider visiting the Phoenix docs](http://www.phoenixframework.org/docs/installation).
 
+<a name="lets-go"></a>
 ## Let's go
 
 ```bash
@@ -68,6 +96,7 @@ You should end up with something like this:
 
 If you do not wish to do anything yourself, I prepared a [repository here](https://github.com/floriank/kitteh-phoenix). You may use the tag `01-lets-go` [to get the initial codebase](https://github.com/floriank/kitteh-phoenix/tree/01-lets-go). 
 
+<a name="scaffolding"></a>
 ## Scaffolding
 
 Scaffolding is a pretty fast and reliable way in Phoenix to get off the ground. We're not going to use it to its full potential here.
@@ -119,6 +148,7 @@ git clean -f && rm -rf web/templates/images
 
 to the rescue. Phew.
 
+<a name="simpler-times"></a>
 ## Simpler times
 
 Let's fall back to the already generated `PageController`. It already has an action `index` ready to use. 
@@ -133,6 +163,7 @@ iex -S mix phoenix.server
 
 Neat.
 
+<a name="providing-a-frontend"></a>
 ## Providing a "frontend"
 
 This should be easy. 
@@ -170,6 +201,7 @@ No, we are not using the [form builders that Phoenix provides](http://hexdocs.pm
 
 If that is all too much frontend stuff for you, i suggest you look at the `02-simple-frontend` [tag here](https://github.com/floriank/kitteh-phoenix/tree/02-simple-frontend).
 
+<a name="new-routes"></a>
 ## New routes
 
 We defined an `/upload` path that the form uses, but this route is nowhere to be found. Let's add it:
@@ -198,6 +230,7 @@ But wait, how do I upload stuff anyway? [Should the framework not provide me wit
 
 Kids, **read your documentation** before heading into battle.
 
+<a name="reading-the-documentation"></a>
 ## Reading the documentation
 
 Turns out, the Phoenix people do provide something to do file uploads. 
@@ -261,6 +294,7 @@ a [virtual](https://github.com/floriank/kitteh-phoenix/blob/03-actually-read-the
 
 If this was all just ramblings of a mad developer for you, you can also check out the tag `03-actually-read-the-docs` [here](https://github.com/floriank/kitteh-phoenix/tree/03-actually-read-the-docs).
 
+<a name="handle-the-file"></a>
 ## Handle the file
 
 It's time for some action in the controller, because at the moment our application will crash if we try to submit the form with an image.
@@ -362,16 +396,19 @@ After the image is persisted we redirect to `show`. Additionally, an `ImageContr
 
 If all goes well, the upload should work and the original image should be served under a memorable shorthand.
 
+<a name="shortcuts"></a>
 ### Shortcuts
 
 If this is all to much coding and you would like the easy way out, check out the tag `04-enable-uploading` [here](https://github.com/floriank/kitteh-phoenix/tree/04-enable-uploading).
 
+<a name="resizing-images"></a>
 ## Resizing images
 
 Remember the image modifiers? Like "Tiny", "Large" and "Monstrous"? We forgot about those.
 
 It would be nice if we had all the images for the different sized images pre-generated. We could use the same mechanisms we already have implemented to serve them.
 
+<a name="genserver"></a>
 ### GenServer
 
 In a (newer) Rails environment, we could utilize anything that fulfills the interface of [`ActiveJob`](http://edgeguides.rubyonrails.org/active_job_basics.html, like an adapter to [Sidekiq](http://sidekiq.org/) or the `delayed_job` [gem](https://github.com/collectiveidea/delayed_job) gem. We basically spin up a second OS process to generate the image, regardless of the solution.
@@ -406,6 +443,7 @@ Using `Task.start` creates a subprocess that is *not linked* to the current proc
 
 This has the _notable_ disadvantage every fire-and-forget strategy has - we do not know if we actually create the images. Good enough for this application, but for something production-ready, one should look for some bidirectional communication. Just in case, you know, you maybe want to connect these images to one another.
 
+<a name="resizing"></a>
 ## Resizing
 
 Resizing images is something one should probably be too lazy to implement oneself. Enter `mogrify` - it is [a wrapper library](https://github.com/route/mogrify) for ImageMagick, providing us with functions for handling image-resizing.
@@ -437,6 +475,7 @@ At this point, our image uploader should be feature complete. Altough being the 
  
 If this is all the same to you and you could not care less about how the images are generated and stored exactly, check out the tag `05-resizing-cats` [here](https://github.com/floriank/kitteh-phoenix/tree/05-resizing-cats).
 
+<a name="problems-of-the-demo-app"></a>
 ## Problems of the demo app
 
 This demo application has quite a few problems, some of them already discussed, some of them a little less obvious:
@@ -453,6 +492,7 @@ Nevertheless, it should make a good demo app as it has almost everything - a web
 
 there is one major problem when it comes to Live reload. I personally am not a fan of such a feature, but it is included in Phoenix by default. I had to [disable it in dev](https://github.com/floriank/kitteh-phoenix/commit/9224dcf92a42a26685ac7fc3e9f019095c0d99e0), since it interfered with the upload feature. the uploaded into a folder that is live reloaded apparently wasn't the best of my ideas.
 
+<a name="conclusion"></a>
 ## Conclusion
 
 [In the next part]({{< ref "using-phoenix-with-docker-part-3-containerization.md" >}}), we'll finally look into using `docker` to gain containers for our project and use `docker compose` to orchestrate our system.

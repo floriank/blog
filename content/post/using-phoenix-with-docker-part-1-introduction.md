@@ -1,5 +1,5 @@
 +++
-date = "2016-02-05T12:21:24+01:00"
+date = "2016-02-15T12:21:24+01:00"
 draft = true
 title = "Using Phoenix with docker, Part 1: Introduction"
 categories = [
@@ -10,6 +10,17 @@ categories = [
 _This is part one of a three part series_: **Part 1** - [Part 2]({{< ref "using-phoenix-with-docker-part-2-implementation.md">}}) - [Part 3]({{< ref "using-phoenix-with-docker-part-3-containerization.md" >}})
 
 _This part is an introduction to the project - consider [skipping to part 2]({{< ref "using-phoenix-with-docker-part-2-implementation.md">}}) if you do want some code_
+
+# Contents
+
+<!-- MarkdownTOC -->
+
+- [Using Phoenix & Elixir](#using-phoenix--elixir)
+- [Using docker](#using-docker)
+- [Project Kitteh](#project-kitteh)
+- [Continuing](#continuing)
+
+<!-- /MarkdownTOC -->
 
 A [colleague of mine](https://kholbekj.surge.sh) will not shut up about [this](https://elixir-lang.org).
 
@@ -27,6 +38,7 @@ Show me a new "advanced" technology everyone praises, I'll show you at least one
 
 A good measure of a new language - to me - therefore would be how strongly you have to stick to the idioms that the language provides to solve your problems. Granted, this requires reflection on one's own side to determine which kind of problems are to be solved. But that is just me rambling on what programming actually is, besides writing the code.
 
+<a name="using-phoenix--elixir"></a>
 ## Using Phoenix & Elixir
 
 Introduce Elixir. Elixir runs on the [Erlang](https://www.wikiwand.com/en/Erlang_(programming_language)) VM called BEAM. Being almost as old as myself (the first version of it was released in 1986), it's one of the pieces of software that have been around so long it's practically optimized to a degree that no recently created project is able to attain.
@@ -39,6 +51,7 @@ Except we cannot - since Elixirs concepts are vastly different from what Ruby ca
 
 But since we're doing web development, let's take a look at [Phoenix](http://phoenixframework.org) - the "Rails of the Elixir" world. It promises to bring the joy Rails development (and the useful conventions that come with it) and eliminating some of the more inconvient Rails-isms.
 
+<a name="using-docker"></a>
 ## Using docker
 
 Before diving into preparing a demo project let me quickly express that I find deployment of Phoenix/Elixir somewhat inconvenient. With Rails, you just use [Heroku](https://heroku.com). That can be hard on your budget though (or on your mental health, as the Asset pipeline made your slug size explode again). So you might go on and deploy on your own machines, deciding to hire a DevOps guy in the process and then silently weep how hard actual scalable deployment is and that it shouldn't come as an afterthought.
@@ -49,6 +62,7 @@ At the time of writing, Elixir has less convenient options (from what I can tell
 
 So, I think it would be reasonable to try out some containers for the time being.
 
+<a name="project-kitteh"></a>
 ## Project Kitteh
 
 So, let us prepare something cat related to containerize and deply somewhere.
@@ -89,6 +103,7 @@ Long story short: We're going to use these containers:
 - Web Container running our Phoenix application
 - nginx for serving static assets and uploaded images
 
+<a name="continuing"></a>
 ## Continuing
 
 [In the next part]({{< ref "using-phoenix-with-docker-part-2-implementation.md" >}}), we'll look into the application stack and discuss Phoenix a bit more in depth. If you are more impatient, consider [skipping directly to part 3]({{< ref "using-phoenix-with-docker-part-3-containerization.md" >}}) to see how the `Dockerfile`s of our components look like and what the `docker compose` process will be. Or if it even works.

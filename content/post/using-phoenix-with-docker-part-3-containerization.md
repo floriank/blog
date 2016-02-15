@@ -1,5 +1,5 @@
 +++
-date = "2016-02-05T15:47:39+01:00"
+date = "2016-02-15T15:47:39+01:00"
 draft = true
 title = "Using Phoenix with docker, Part 3: Containerization"
 categories = [
@@ -11,8 +11,29 @@ _This is the final part of a three part series_: [Part 1]({{< ref "using-phoenix
 
 __Note__: I am using the latest `docker-compose` and the latest `docker-engine` later on in this post.
 
+# Contents
+
+<!-- MarkdownTOC -->
+
+- [Composition](#composition)
+- [Kitteh Dockerfile](#kitteh-dockerfile)
+- [Database connections](#database-connections)
+- [Tearing it all down](#tearing-it-all-down)
+  - [Container structure](#container-structure)
+  - [Creating the volume container](#creating-the-volume-container)
+  - [Docker 1.10](#docker-110)
+  - [Configuring nginx](#configuring-nginx)
+  - [Running](#running)
+  - [Assets & images](#assets--images)
+- [Looking back](#looking-back)
+  - [Cleaning up](#cleaning-up)
+- [Conclusion](#conclusion)
+
+<!-- /MarkdownTOC -->
+
 So far, so good. We now have a working application that we want to containerize. At the moment, [the application is feature complete](https://github.com/floriank/kitteh-phoenix/tree/05-resizing-cats), but nothing interesting related to `docker` happened yet.
 
+<a name="composition"></a>
 ## Composition
 
 Before actually starting with the Dockerfile of our own codebase, let's introduce a [docker compose](https://docs.docker.com/compose/overview/) configuration, which is a YAML file called `docker-compose.yml`:
@@ -66,6 +87,7 @@ Cannot locate specified Dockerfile: Dockerfile
 
 No matter what, we should think about our applications `Dockerfile`.
 
+<a name="kitteh-dockerfile"></a>
 ## Kitteh Dockerfile
 
 Remmembering the [section about resizing in part 2](#todo) earlier, we know that we have at least the dependency of ImageMagick besides the actual Erlang VM and OTP to provide. 
@@ -160,6 +182,7 @@ Uploading shouldn't work - there is no migrated database yet and you should get 
 
 If you are to lazy to create your own `Dockerfile`, please see the tag `06-dockerizing-kitties` [here](https://github.com/floriank/kitteh-phoenix/tree/06-dockerizing-kitties).
 
+<a name="database-connections"></a>
 ## Database connections
 
 We should see if we can make the database work.
@@ -185,12 +208,13 @@ For our use case this can stay hard coded as this file is [not checked into git 
 
 However, we need to make sure that the database is reachable, since we need to migrate it (the database image actually already contains a database named after the environment [variable set here](https://github.com/floriank/kitteh-phoenix/blob/06-dockerizing-kitties/docker-compose.yml#L7) - come to think of it, it should probabaly [be the same as in the configuration](https://github.com/floriank/kitteh-phoenix/commit/07146c2b2c0a141d98ca821856802dacf7a7b075))
 
-__Note__: I encountered some problems when trying to use the `$POSTGRES_DB` variable. for some reason it always fell back to the `$POSTGRES_USER`. I have not yet figured out why. These problems only occured while using ther version 1 of the compose configuration.
+__Note__: I encountered some problems when trying to use the `$POSTGRES_DB` variable. for some reason it always fell back to the `$POSTGRES_USER`. I have not yet figured out why. These problems only occured while using the version 1 of the compose configuration.
 
 Long story short, if we run 
 
 ```bash
-docker-compose up -d
+# use -d for detached mode
+docker-compose up
 ```
 
 we can attach to the running docker container using `exec` like this:
@@ -198,6 +222,12 @@ we can attach to the running docker container using `exec` like this:
 ```bash
 # container name may vary
 docker exec -it kitteh_web_1 /bin/bash
+```
+
+or 
+
+```bash
+docker-compose run web /bin/bash
 ```
 
 and then run
@@ -215,6 +245,9 @@ If we now try to upload a picture again, it _should_ work. You can of course alw
 docker-compose run web mix ecto.migrate
 ```
 
+directly.
+
+<a name="tearing-it-all-down"></a>
 ## Tearing it all down
 
 If we restart our composition, we should take note that our database data should have been persisted. But if we reload the image url we just generated, the image will be gone, as the actual images are not persisted in the container.
@@ -231,6 +264,7 @@ nginx:
   # now what?
 ```
 
+<a name="container-structure"></a>
 ### Container structure
 
 Let's talk about the basic idea first:
@@ -239,10 +273,11 @@ We'll use a data volume container that can be used by both the not-yet-existing 
 
 Here is the checklist:
 
-1. create a data container with volumes for both `web` and `nginx` containers.
+1. Create a data container with volumes for both `web` and `nginx` containers.
 2. Mount volumes into both containers
-3. create an `nginx` container that has a site config for serving the contents of the volume mounted
+3. Create an `nginx` container that has a site config for serving the contents of the volume mounted
 
+<a name="creating-the-volume-container"></a>
 ### Creating the volume container
 
 Before we add our container, we should reevaluate where exactly we want to store our images. 
@@ -280,6 +315,7 @@ If everything went well, the images should be preserved between container restar
 
 We can now create an nginx image. We're going to use a custom Dockerfile to do so - we can store it alongside the codebase.
 
+<a name="docker-110"></a>
 ### Docker 1.10
 
 This is where things get interesting - Docker [was recently updated to v1.10.0](https://blog.docker.com/2016/02/docker-1-10/) - and along with it came an update to `docker-compose` with a new version of the syntax, allowing for custom dockerfile directives in the `build` object of the configuration.
@@ -290,10 +326,12 @@ __Note__: If you do not want to upgrade, you can always build yourself a local i
 
 The updated configuration can be found [in this commit](https://github.com/floriank/kitteh-phoenix/commit/f8188c8130a61f2131dc843982d23e1f30e1eb6f).
 
+<a name="configuring-nginx"></a>
 ### Configuring nginx
 
 I went with a super simple [nginx configuration file](https://github.com/floriank/kitteh-phoenix/commit/080baab1abe78f2d3f508c0b3eede7c6182a0d09), which is bogus, but should work nonetheless.
 
+<a name="running"></a>
 ### Running
 
 A simple 
@@ -304,6 +342,7 @@ docker-compose up
 
 should bring up our creation. I also tagged [this point of development for your convenience if you do not wish to code along](https://github.com/floriank/kitteh-phoenix/tree/07-composing-kittehs).
 
+<a name="assets--images"></a>
 ### Assets & images
 
 Wait, what about assets? We still get something along the lines of
@@ -452,6 +491,7 @@ Neat.
 
 For your convenience, I [added a tag here](https://github.com/floriank/kitteh-phoenix/tree/08-serving-static-content) so that you can compare progress yourselves.
 
+<a name="looking-back"></a>
 ## Looking back
 
 We have done a lot so far. We [coded a small uploader application]({{< ref "using-phoenix-with-docker-part-2-implementation.md">}}) and put most of the dependencies into containers. 
@@ -465,6 +505,7 @@ Here is the list of containers used:
 
 There are also 3 volume containers that can be used to share data between the containers and provide persistance.
 
+<a name="cleaning-up"></a>
 ### Cleaning up
 
 We do have some prolems with the setup as well:
@@ -482,11 +523,6 @@ erl_crash.dump
 
 # Static artifacts
 node_modules/
-
-# Since we are building assets from web/static,
-# we ignore priv/static. You may want to comment
-# this depending on your deployment strategy.
-priv/static/
 ```
 
 That reduces the `web` images size **by about 4MB**, as the `node_modules` are not needed in the image. Woah.
@@ -499,6 +535,7 @@ Finally, our main attention should probably also focus on removing items from th
 
 It depends on how much convenience you want - ultimately, reducing tha base image size should be the **first** goal in my opinion.
 
+<a name="conclusion"></a>
 ## Conclusion
 
 If you read this far - thanks! i hope you found the material I provided interesting and you can take something away for your own projects.
