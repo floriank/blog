@@ -413,7 +413,7 @@ In a (newer) Rails environment, we could utilize anything that fulfills the inte
 
 Not an option here though. There are some solutions to queues and background jobs, but we are on the Erlang VM anyway, so we can utilize the technology available to us. After all, BEAM processes are cheap and lightweight.
 
-[GenServer](http://elixir-lang.org/getting-started/mix-otp/genserver.html) might be the answer here. But actually having a long running process in the background that we can use as a service might be overkill here.
+[GenServer](http://elixir-lang.org/getting-started/mix-otp/genserver.html) might be the answer. But actually having a long running process in the background that we can use as a service might be overkill here.
 
 Let's use `Task` instead. `Task` is a wrapper around Elixirs `spawn` function and can be used for a [multitude of things](http://elixir-lang.org/docs/v1.1/elixir/Task.html) that are actually more advanced than we do right here, right now.
 
