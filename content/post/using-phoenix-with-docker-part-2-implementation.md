@@ -151,7 +151,7 @@ to the rescue. Phew.
 
 Let's fall back to the already generated `PageController`. It already has an action `index` ready to use. 
 
-At the moment it renders a file called `index.html.eex` ([link for the lazy](https://github.com/floriank/kitteh-phoenix/blob/lets-go/web/templates/page/index.html.eex)). It constitutes a demo partial that together with the `app.html.eex` ([this one here](https://github.com/floriank/kitteh-phoenix/blob/lets-go/web/templates/layout/app.html.eex)) forms a complete webpage at the `/` route. 
+At the moment it renders a file called `index.html.eex` ([link for the lazy](https://github.com/floriank/kitteh-phoenix/blob/01-lets-go/web/templates/page/index.html.eex)). It constitutes a demo partial that together with the `app.html.eex` ([this one here](https://github.com/floriank/kitteh-phoenix/blob/01-lets-go/web/templates/layout/app.html.eex)) forms a complete webpage at the `/` route. 
 
 We can look at it on the locally running instance at [localhost](http://localhost:4000) by executing
 
