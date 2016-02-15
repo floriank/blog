@@ -92,7 +92,7 @@ The project should work as a tech demo to provide and explain the following comp
 - the user frontend (web application)
 - data storage for images and their properties
 - serving images in a somewhat efficient way
-- a queue solution with job workers
+- a queue solution with job workers (maybe ...?)
 
 The project can be grabbed from [its repository](https://github.com/floriank/kitteh-phoenix) if you are interested.
 
