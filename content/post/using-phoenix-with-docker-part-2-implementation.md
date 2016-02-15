@@ -1,6 +1,5 @@
 +++
 date = "2016-02-15T15:32:22+01:00"
-draft = true
 title = "Using Phoenix with docker, Part 2: Implementation"
 categories = [
     "development"
