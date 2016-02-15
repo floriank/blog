@@ -89,7 +89,7 @@ No matter what, we should think about our applications `Dockerfile`.
 <a name="kitteh-dockerfile"></a>
 ## Kitteh Dockerfile
 
-Remmembering the [section about resizing in part 2](#todo) earlier, we know that we have at least the dependency of ImageMagick besides the actual Erlang VM and OTP to provide. 
+Remmembering the section about resizing in part 2 earlier, we know that we have ImageMagick as a dependency besides the actual Erlang VM and OTP to provide. 
 
 What do we have to ensure that our whole system works? Here is a checklist:
 
