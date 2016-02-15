@@ -409,7 +409,7 @@ It would be nice if we had all the images for the different sized images pre-gen
 <a name="genserver"></a>
 ### GenServer
 
-In a (newer) Rails environment, we could utilize anything that fulfills the interface of [`ActiveJob`](http://edgeguides.rubyonrails.org/active_job_basics.html, like an adapter to [Sidekiq](http://sidekiq.org/) or the `delayed_job` [gem](https://github.com/collectiveidea/delayed_job) gem. We basically spin up a second OS process to generate the image, regardless of the solution.
+In a (newer) Rails environment, we could utilize anything that fulfills the interface of [ActiveJob](http://edgeguides.rubyonrails.org/active_job_basics.html), like an adapter to [Sidekiq](http://sidekiq.org/) or the `delayed_job` [gem](https://github.com/collectiveidea/delayed_job) gem. We basically spin up a second OS process to generate the image, regardless of the solution.
 
 Not an option here though. There are some solutions to queues and background jobs, but we are on the Erlang VM anyway, so we can utilize the technology available to us. After all, BEAM processes are cheap and lightweight.
 
