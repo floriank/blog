@@ -465,11 +465,11 @@ defp resize(image, name, size) do
 end
 ```
 
-This should create all the resized versions. We can also utilize the builtin `Mogrify.copy` function to skip manual copying as we did for the initial image. We end up with returning so params we can use to create another changeset and insert everything. neat, the rest of the system should now work for the resized images as well.
+This should create all the resized versions. We can also utilize the builtin `Mogrify.copy` function to skip manual copying as we did for the initial image. We end up with returning params we can use to create another changeset and insert everything. The rest of the system should now work for the resized images as well.
 
 **Note**: Somewhere around this point I noticed [a screw up in the router](https://github.com/floriank/kitteh-phoenix/commit/b7724faae9725e127f33734bcfaf2eb0ed79a101#diff-8c237d3166e777cbb3d401efc40b1c62R19) as matching order was off. This lead to a redirect to `/` after the initial image had been created.
 
-At this point, our image uploader should be feature complete. Altough being the duct-tape ghetto version it now is, it should provide a good bassis to play around with in the next part.
+At this point, our image uploader should be feature complete. Altough being the duct-tape ghetto version it now is, it should provide a good basis to play around with in the next part.
  
 If this is all the same to you and you could not care less about how the images are generated and stored exactly, check out the tag `05-resizing-cats` [here](https://github.com/floriank/kitteh-phoenix/tree/05-resizing-cats).
 
