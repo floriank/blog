@@ -78,7 +78,7 @@ The project will do the following:
 
 1. Let the user upload a picture of a cat
 2. Present the user with a short, descriptive URL that they can share and that stays fixed forever(tm)
-3. Provide modifiers to the url to scale the image (`Tiny`, `Large`, `Monstrous`), being scaled to (`90x90`, `300x300`, `600x600`) - yes, quadratic.
+3. Provide modifiers to the url to scale the image (`Tiny`, `Large`, `Monstrous`), being scaled to a specific width
 
 So, in practise, this should look as follows:
 
