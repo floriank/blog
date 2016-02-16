@@ -26,6 +26,7 @@ __Note__: I am using the latest `docker-compose` and the latest `docker-engine` 
   - [Assets and images](#assets-and-images)
 - [Looking back](#looking-back)
   - [Cleaning up](#cleaning-up)
+- [One more thing](#one-more-thing)
 - [Conclusion](#conclusion)
 
 <!-- /MarkdownTOC -->
@@ -535,6 +536,11 @@ There is also SSL yet, we're purely on relying on HTTP - which is not a producti
 Finally, our main attention should probably also focus on removing items from the codebase in the web container that we do not need - mainly the actual codebase, as Elixir compiles to BEAM code and we would only need that. Just for comparison, we are talking about 18MB in the case of kitteh.
 
 It depends on how much convenience you want - ultimately, reducing tha base image size should be the **first** goal in my opinion.
+
+<a name="one-more-thing"></a>
+## One more thing
+
+We could have also used [Exrm](https://github.com/bitwalker/exrm) to bundle and prepare a release into a container. I will (probably) explore this in a later entry.
 
 <a name="conclusion"></a>
 ## Conclusion
