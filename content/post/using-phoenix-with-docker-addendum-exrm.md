@@ -2,7 +2,6 @@
 categories = ["development"]
 date = "2016-03-07T12:28:34+01:00"
 title = "Using Phoenix with docker, Addendum: Exrm"
-draft = true
 +++
 
 _This is an addendum to a three part series: [Part 1]({{< ref "using-phoenix-with-docker-part-1-introduction.md" >}}) - [Part 2]({{< ref "using-phoenix-with-docker-part-2-implementation.md" >}}) - [Part 3]({{< ref "using-phoenix-with-docker-part-3-containerization" >}})_
