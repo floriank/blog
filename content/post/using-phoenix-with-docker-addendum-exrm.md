@@ -28,7 +28,7 @@ _This is an addendum to a three part series: [Part 1]({{< ref "using-phoenix-wit
 <a name="bad-ideas"></a>
 ## Bad ideas
 
-I have had some bad ideas in the past - building a container out of a Phoenix application like I was building it out of a Rails application wasn't probably the best idea ever.
+I have had some bad ideas in the past - building a container out of a Phoenix application like building it out of a Rails application wasn't probably the best idea ever.
 
 After all, you _never_ ship your source code into production when using a compiled language.
 
@@ -39,7 +39,7 @@ Regardless, I worked with [Golang](http://golang.org) before - the ability to bu
 
 Elixir offers the possibility of using a library called [Exrm](https://github.com/bitwalker/exrm), the Elixir release manager. It has the self proclaimed goal to make Elixir deployments very easy and delightful to work with.
 
-What happens is that Exrm will build a self-contained artifact, which can be deployed more easily and integrates with a lot of features that Erlang already provides, like versioing or hot deployments.
+What happens is that Exrm will build a self-contained artifact, which can be deployed more easily and integrates with a lot of features that Erlang already provides, like versioning or hot deployments.
 
 <a name="using-exrm-with-kitteh"></a>
 ## Using Exrm with Kitteh
@@ -71,7 +71,7 @@ Since this will be a production release, we need to tweak the `prod.exs` configu
 config :phoenix, :serve_endpoints, true
 ```
 
-This will make Phoenix serve all endpoints. Note that for testing purposes I also changed the hostname to `localhost` throughout the configuration.
+Note that for testing purposes I also changed the hostname to `localhost` throughout the configuration.
 
 <a name="building-the-docker-images---once-more"></a>
 ## Building the docker image(s) - once more.
@@ -100,6 +100,34 @@ when trying to run the created image.
 Using `alpine:edge` resolves the problem. 
 
 Unfortunately, this is a mojor disadvantage in the build chain at the moment. The target container must provide the same environment as the build system provides, otherwise there will be _no_ guarantee of this working.
+
+Here is the full `Dockerfile`:
+
+```Dockerfile
+FROM alpine:edge
+
+RUN apk --update add erlang erlang-sasl erlang-crypto erlang-syntax-tools && rm -rf /var/cache/apk/*
+
+ENV APP_NAME kitteh
+ENV APP_VERSION "0.0.1"
+ENV PORT 4000
+
+RUN mkdir -p /$APP_NAME
+ADD rel/$APP_NAME/bin /$APP_NAME/bin
+ADD rel/$APP_NAME/lib /$APP_NAME/lib
+ADD rel/$APP_NAME/releases/start_erl.data                 /$APP_NAME/releases/start_erl.data
+ADD rel/$APP_NAME/releases/$APP_VERSION/$APP_NAME.sh      /$APP_NAME/releases/$APP_VERSION/$APP_NAME.sh
+ADD rel/$APP_NAME/releases/$APP_VERSION/$APP_NAME.boot    /$APP_NAME/releases/$APP_VERSION/$APP_NAME.boot
+ADD rel/$APP_NAME/releases/$APP_VERSION/$APP_NAME.rel     /$APP_NAME/releases/$APP_VERSION/$APP_NAME.rel
+ADD rel/$APP_NAME/releases/$APP_VERSION/$APP_NAME.script  /$APP_NAME/releases/$APP_VERSION/$APP_NAME.script
+ADD rel/$APP_NAME/releases/$APP_VERSION/start.boot        /$APP_NAME/releases/$APP_VERSION/start.boot
+ADD rel/$APP_NAME/releases/$APP_VERSION/sys.config        /$APP_NAME/releases/$APP_VERSION/sys.config
+ADD rel/$APP_NAME/releases/$APP_VERSION/vm.args           /$APP_NAME/releases/$APP_VERSION/vm.args
+
+EXPOSE $PORT
+
+CMD trap exit TERM; /$APP_NAME/bin/$APP_NAME foreground & wait
+```
 
 <a name="results"></a>
 ### Results!
@@ -164,7 +192,7 @@ will now fail. Luckily, we can check on the environment directly:
 System.get_env("MIX_ENV") == "prod"
 ```
 
-It's a subtle thing, but as of now, running the application will fail because of that.
+It's a subtle thing, but running the application will fail because of that.
 
 <a name="so-were-going-to-ignore-imagemagick"></a>
 ## So, we're going to ignore ImageMagick?
@@ -217,7 +245,7 @@ After this change, the images should be properly resized in the background again
 <a name="conclusion"></a>
 ## Conclusion
 
-_If you skipped directly to my conclusion, please see the tag [`09-exrm-and-docker`](https://github.com/floriank/kitteh-phoenix/tree/09-exrm-and-docker) for the codebase at the end of this article_.
+_If you skipped directly to my conclusion, please see the tag [`10-imagemagick-finally`](https://github.com/floriank/kitteh-phoenix/tree/10-imagemagick-finally) for the codebase at the end of this article_.
 
 So - I think we are a little bit better off with this approach:
 
@@ -228,10 +256,10 @@ So - I think we are a little bit better off with this approach:
 There are some downsides though:
 
 - Running migrations is currently tied to the server directly
+- Configuration is not completely independent from the application - as of now, your admin needs to be able to read and write Elixir
 - The assets are immutable and have to be rebuilt each time, however, this allows for independent versioning for the assets
+- The app version is hard coded - one could extract it from `mix.exs`, if ones beard is long enough
 
-While looking at this process in general, I must also say that running elixir in docker containers does _not_ work towards the microservice approach, the images _all_ need to have the full run time environment after all and it might be better to use the abstraction for applications that the Erlang VM provides directly.
+While looking at this process in general, I must also say that running Elixir in docker containers does _not_ work towards the microservice approach, the images _all_ need to have the full run time environment and it might be better to use the abstraction for applications and processes that the Erlang VM provides directly.
 
-If you find yourself having to integrate a service based on Elixir or Erlang in a running environemnt, this might be an option for you after all.
-
-I hope you learned a bit from this project - I always appreciate commentary (or plain ranting if that is your thing!).
+If you find yourself having to integrate a service based on Elixir or Erlang in an existing environment, this might be an option for you after all.
