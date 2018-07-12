@@ -1,6 +1,6 @@
 +++
 title = "The steel industry, file_fdw and the synchronisation of data"
-date = "2018-07-12T19:30:30+01:00"
+date = "2018-07-12T09:30:30+01:00"
 description = "A post about using file_fdw to synch data sources"
 categories = [
   "development"
@@ -281,18 +281,21 @@ defmodule Synchronize.Companies.SQLModule do
   alias MyService.{Company, Repo}
   alias Synchronize.ImportModule
   alias Ecto.Adapters.SQL
+  
   @doc """
   the main entrypoint for this module
   """
   def sync do
     find_companies() |> run()
   end
+  
   @doc """
   Starts the import for a given set of companies
   """
   def run(companies) do
     ImportModule.execute(companies, &map/1, &import_batch/1)
   end
+  
   @doc """
   Find missing companies in the services database
   """
@@ -306,6 +309,7 @@ defmodule Synchronize.Companies.SQLModule do
     WHERE companies.external_id IS NULL
     """)
   end
+
   defp map([external_id, name]) do
     now = DateTime.utc_now()
     %{
@@ -315,6 +319,7 @@ defmodule Synchronize.Companies.SQLModule do
       updated_at: now
     }
   end
+
   defp import_batch(batch) do
     Repo.insert_all(
       Company,
@@ -338,6 +343,7 @@ defmodule Synchronize.ImportModule do
   """
   require Logger
   alias MyService.Repo
+  
   @doc """
   Starts the import for a given set of billing addresses
   """
@@ -350,7 +356,9 @@ defmodule Synchronize.ImportModule do
       System.convert_time_unit(finished - started, :native, :milliseconds)
     Logger.info("Synchronized #{count} item(s) in #{time_spent} millisecond(s)")
   end
+
   @batch_size 2_000
+
   defp run(source, item_mapper, batch_processor) do
     processor = fn batch ->
       batch_processor.(batch)
@@ -365,9 +373,11 @@ defmodule Synchronize.ImportModule do
       |> Enum.count()
     end)
   end
+
   def stream_row(source) when is_list(source) do
     source
   end
+
   def stream_row(%Ecto.Adapters.SQL.Stream{} = source) do
     Stream.flat_map(source, fn %{rows: rows} -> rows end)
   end
@@ -405,6 +415,6 @@ The main thing to take away for our work at kloeckner.i (and for myself) was tha
 
 If you want to try this and see this strategy in action - I prepared [a repo](https://github.com/floriank/postgres_sync_file_fdw) showing the technique with some test data. It runs as two docker containers, so you should be able to use it right away. If you have questions, drop me an [email](mailto:schnuffifk+blog@gmail.com) - I'll be glad to help.
 
-If you completely disagree with all of this, I encourage you to take a look at the [jobs page](https://kloeckner-i.com/jobs). We're always looking for smart engineers that can contribute to making the transformation of a whole industry a successful story. 
+If you completely disagree with all of this, I encourage you to take a look at our[jobs page](https://kloeckner-i.com/jobs). We're always looking for smart engineers that can contribute to making the transformation of a whole industry a successful story. 
 
 It's also the best team in the world, not that I might be biased or anything.
