@@ -392,7 +392,11 @@ __NOTE__: In reality, the trigger for finding the changeset is centralized on a 
 
 # Numbers, please!
 
-While I cannot provide a benchmark here, I can say that switching strategies reduced our import time for this particular piece of customer data __from 300 seconds__ to about __10 seconds__ average for any given synchronisation process. With the exception of a full synchronisation, which has to process and copy all the data from the external CSV to the internal tables, most of the runs are below those numbers.
+While I cannot provide a benchmark here, I can say that switching strategies reduced our import time for this particular piece of customer data __from 300 seconds__ to about __10 seconds__ average for any given synchronisation process. With the exception of a full synchronisation, which has to process and copy all the data from the external CSV to the internal tables, most of the runs are below those numbers. Nevertheless, here is a graph:
+
+<center>
+    ![Import time](/img/import-time.png)
+</center>
 
 The load on the application is minimal and the actual bottleneck is the database. We use Elixir in this context to delegate and trigger, instead of doing the actual work.
 
