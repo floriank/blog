@@ -267,7 +267,7 @@ Well, again, Elixir allows use to model this process in very small functions. Vi
   ![Modules!](/img/import_modules.png)
 </center>
 
-We create to modules, one which we'll call `SQLModule` that will be used to hold functions that run a Query to determine what the changeset looks like and one that will actually execute insert/update/delete the data in our service tables. Let's call that one the `ImportModule`.
+We create two modules, one which we'll call `SQLModule` that will be used to hold functions that run a Query to determine what the changeset looks like and one that will actually execute insert/update/delete the data in our service tables. Let's call that one the `ImportModule`.
 
 __Full disclosure__: In the real world, we employ data checking and we actually need to grab data from multiple files into a state that makes sense to use it in the tools we built for our customers. That also means, that reality is usually not as simple as it is and we needed to design more complex queries, joining the data of multiple CSVs together.
 
@@ -281,21 +281,21 @@ defmodule Synchronize.Companies.SQLModule do
   alias MyService.{Company, Repo}
   alias Synchronize.ImportModule
   alias Ecto.Adapters.SQL
-  
+
   @doc """
   the main entrypoint for this module
   """
   def sync do
     find_companies() |> run()
   end
-  
+
   @doc """
   Starts the import for a given set of companies
   """
   def run(companies) do
     ImportModule.execute(companies, &map/1, &import_batch/1)
   end
-  
+
   @doc """
   Find missing companies in the services database
   """
@@ -331,7 +331,7 @@ defmodule Synchronize.Companies.SQLModule do
 end
 ```
 
-Running `Synchronize.Companies.SQLModule.sync/1` will now trigger the query described earlier - whatever changeset is found, will then be given to the `ImportModule`, which holds functions to execute the mapping necessary (`Synchronize.Companies.SQLModule.map/1`) and the actual logic to import a single batch of that change (`Synchronize.Companies.SQLModule.import_batch/1`). 
+Running `Synchronize.Companies.SQLModule.sync/1` will now trigger the query described earlier - whatever changeset is found, will then be given to the `ImportModule`, which holds functions to execute the mapping necessary (`Synchronize.Companies.SQLModule.map/1`) and the actual logic to import a single batch of that change (`Synchronize.Companies.SQLModule.import_batch/1`).
 
 The `ImportModule` is rather simple:
 
@@ -343,7 +343,7 @@ defmodule Synchronize.ImportModule do
   """
   require Logger
   alias MyService.Repo
-  
+
   @doc """
   Starts the import for a given set of billing addresses
   """
@@ -405,20 +405,23 @@ The load on the application is minimal and the actual bottleneck is the database
 _No_ - while this mechanism is interesting, fast and fun to work with (it's also a great debugging tool for CSV inspection when Excel is just a little to intense to use), the solution has to fit the use case.
 
 In general, you should avoid it, if:
-- you only import once
-- you don't feel comfortable using SQL and have extremely complicated transformations
-- you don't have a stable csv definition
-- you cannot afford to have business logic tied to your database
+
+  - you only import once
+  - you don't feel comfortable using SQL and have extremely complicated transformations
+  - you don't have a stable csv definition
+  - you cannot afford to have business logic tied to your database
+
 The strategy is worth a shot if:
-- you need to compare state of several files and the data you have
-- you need it fast (PostgreSQL COPY is pretty fast)
-- You want to offload more to your database server
+
+  - you need to compare state of several files and the data you have
+  - you need it fast (PostgreSQLs `COPY` is pretty fast)
+  - You want to offload more to your database server
 
 # Learnings and a repository
 The main thing to take away for our work at kloeckner.i (and for myself) was that PostgreSQL offers so much that it's almost scary. After having run through many iterations of trying out import strategies we finally found something that fits a lot of our use cases.
 
 If you want to try this and see this strategy in action - I prepared [a repo](https://github.com/floriank/postgres_sync_file_fdw) showing the technique with some test data. It runs as two docker containers, so you should be able to use it right away. If you have questions, drop me an [email](mailto:schnuffifk+blog@gmail.com) - I'll be glad to help.
 
-If you completely disagree with all of this, I encourage you to take a look at our [jobs page](https://kloeckner-i.com/jobs). We're always looking for smart engineers that can contribute to making the transformation of a whole industry a successful story. 
+If you completely disagree with all of this, I encourage you to take a look at our [jobs page](https://kloeckner-i.com/jobs). We're always looking for smart engineers that can contribute to making the transformation of a whole industry a successful story.
 
 It's also the best team in the world, not that I might be biased or anything.
