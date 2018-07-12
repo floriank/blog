@@ -415,6 +415,6 @@ The main thing to take away for our work at kloeckner.i (and for myself) was tha
 
 If you want to try this and see this strategy in action - I prepared [a repo](https://github.com/floriank/postgres_sync_file_fdw) showing the technique with some test data. It runs as two docker containers, so you should be able to use it right away. If you have questions, drop me an [email](mailto:schnuffifk+blog@gmail.com) - I'll be glad to help.
 
-If you completely disagree with all of this, I encourage you to take a look at our[jobs page](https://kloeckner-i.com/jobs). We're always looking for smart engineers that can contribute to making the transformation of a whole industry a successful story. 
+If you completely disagree with all of this, I encourage you to take a look at our [jobs page](https://kloeckner-i.com/jobs). We're always looking for smart engineers that can contribute to making the transformation of a whole industry a successful story. 
 
 It's also the best team in the world, not that I might be biased or anything.
