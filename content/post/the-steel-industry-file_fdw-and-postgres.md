@@ -8,6 +8,27 @@ categories = [
 draft = true
 +++
 
+# Contents
+
+<!-- MarkdownTOC autolink=true -->
+
+- [Steel me.](#steel-me)
+- [On the process of selling steel world wide](#on-the-process-of-selling-steel-world-wide)
+- [Synchronization vs. Import](#synchronization-vs-import)
+- [PostgreSQL, how i love thee](#postgresql-how-i-love-thee)
+    - [Foreign data wrappers](#foreign-data-wrappers)
+    - [file_fdw](#file_fdw)
+- [Using file_fdw with Ecto](#using-file_fdw-with-ecto)
+- [Transform the data](#transform-the-data)
+- [The key to doing things fast](#the-key-to-doing-things-fast)
+- [Joining external and internal tables](#joining-external-and-internal-tables)
+- [What to do next?](#what-to-do-next)
+- [Numbers, please!](#numbers-please)
+- [So, we use this all the time now?](#so-we-use-this-all-the-time-now)
+- [Learning and a repository](#learning-and-a-repository)
+
+<!-- /MarkdownTOC -->
+
 # Steel me.
 
 My god.
@@ -16,17 +37,17 @@ It has been __2 years__ since I wrote something.
 
 I am really bad at social media.
 
-I also started working as a developer for a company called [Klöckner & Co](https://kloeckner.com). To be even more specific, I work for its subsidiary called [kloeckner.i](https://kloeckner-i.com), which is focused on bringing the other subsidiaries ([Kloeckner France](http://www.kdi.fr/), [Kloeckner UK](https://www.kloeckner.co.uk/), [Kloeckner Metals US](https://kloecknermetals.com) and others), of the group into a glorious, bright and ... well, digital future.
+I also started working as a developer for a company called [Klöckner & Co](https://kloeckner.com). To be exact, I work for its subsidiary called [kloeckner.i](https://kloeckner-i.com), which is focused on bringing the other subsidiaries ([Kloeckner France](http://www.kdi.fr/), [Kloeckner UK](https://www.kloeckner.co.uk/), [Kloeckner Metals US](https://kloecknermetals.com) and many more), of the group into a glorious, bright and ... well, digital future.
 
-We are building tools to help our companies trade and deal with our product - steel - in a digital (as opposed to analogue) facon.
+We are building tools to help our companies trade and deal with our product - _steel_ - in a digital (as opposed to analogue) facon.
 
 It's all about innovation (the "i" in kloeckner.i) and coming up with new ideas on how the industry will operate in 10 years from now. Interesting stuff!
 
 If you want to learn more, you can watch our main man, CEO of the group, Mister Gisbert Rühl himself [explaining the concepts](https://www.youtube.com/watch?v=RJrKjxsze0s) of the how and why.
 
-In the meantime, after having built the inital team, I was promoted to the role of a software architect. Initially, this meant leaving the shackles of management behind and focusing more on the conceptualization of the ideas that our product department provides.
+In the meantime, after having built the inital team, I  working as a software architect. For starters, this meant leaving the shackles of management behind and focusing more on the conceptualization of the ideas that our product department provides.
 
-In order to understand the challenges we face at kloeckner.i, one needs to understand how the overall business model looks like:
+In order to understand the challenges we face at kloeckner.i, one needs to understand how the overall business model looks like.
 
 # On the process of selling steel world wide
 
@@ -56,7 +77,7 @@ The overall strategy however, stays the same:
 
 # Synchronization vs. Import
 
-Keeping our requirements in mind, combined with the fact that we need to operate a copy on the data, the challenge here is to keep everything in sync. The external system will provide a data dump _somehow_ and we are tasked to make sure that we have the same data in our systems.
+Keeping our requirements in mind _and_ the fact that we need to operate on a copy of the data, the challenge here is to keep everything in sync. The external system will provide a data dump _somehow_ and we are tasked to make sure that we have the same data in our systems.
 
 Having realized this, we usually speak of synchronisation at kloeckner.i - and as I set out to find a better solution for our long running imports, I stumbled upon a keynote at [ElixirConf 2018 in Warsaw](https://elixirconf.eu) - a talk given by developer [Evadne Wu](https://github.com/evadne). She dealt with the topic of data imports and called for having a better relationship with our data storage. As it turns out, [PostgreSQL](https://postgresql.org) offers a ton of useful extra features that I had ignored for way too long.
 
