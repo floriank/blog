@@ -1,7 +1,6 @@
 +++
 categories = ["development"]
 title = "Moving on from postgres_fdw"
-draft = true
 date = "2019-04-03T09:30:30+01:00"
 +++
 
