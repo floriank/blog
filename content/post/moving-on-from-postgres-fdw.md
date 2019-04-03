@@ -147,7 +147,7 @@ end
 
 All this will do is just read a path and open up a stream with the data. We'll not doing anything with that stream yet, so it has just a small cost attached - and we're far away from loading a potentially large CSV into memory.
 
-Now, it turns out, Elixirs `Ecto` library [also supports streaming](https://hexdocs.pm/ecto_sql/Ecto.Adapters.SQL.html#stream/4). It allow us to use a Repo and a statement parametrized  statement to be lazily evaluated:
+Now, it turns out, Elixirs `Ecto` library [also supports streaming](https://hexdocs.pm/ecto_sql/Ecto.Adapters.SQL.html#stream/4). It allows us to use a Repo and a statement parametrized  statement to be lazily evaluated:
 
 ```elixir
 defmodule SQLStreamer do
@@ -160,11 +160,11 @@ defmodule SQLStreamer do
 end
 ```
 
-Nice, but useless for the moment. We now have a lazy file read and a lazy sql statement executor. What is missing is a good combination of the two. Thankfully, there is [`Enum.into`](https://hexdocs.pm/elixir/Enum.html#into/2), which can combine the two. As the docs say:
+Nice, but useless for the moment. We now have a lazy file read and a lazy SQL statement executor. What is missing is a good combination of the two. Thankfully, there is [`Enum.into`](https://hexdocs.pm/elixir/Enum.html#into/2), which can combine the two. As the docs say:
 
 > Inserts the given enumerable into a collectable.
 
-That means, if we have two streams, we can effectively combine the out of one into the input of the other:
+That means, if we have two streams, we can effectively combine the output of one into the input of the other:
 
 ```elixir
 defmodule Combiner do
