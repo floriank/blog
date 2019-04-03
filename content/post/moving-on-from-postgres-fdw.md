@@ -40,25 +40,25 @@ I consider myself a technology leader - this post therefore needs to aim at what
 
 What did I miss completely in just flat out dismissing the opinion of the developer?
 
-Well, for one thing - that they were __just straight up right about everything. The argument was for less complexity in a complex system. Consider the things you need to make my initial setup work:
+Well, for one thing - that they were __just straight up right about everything__. The argument was for less complexity in a complex system. Consider the things you need do to make my initial setup work:
 
-  * a database (container)
+  * setup a database (container)
     - that needs access to the CSV files
     - that need to run PostgreSQL with the `postgres_fdw` extension
-  * an application (container)
+  * setup an application (container)
     - that needs access to the timestamp lock file, next to the CSVs
 
 Consider what you need to do it with PostgreSQLs `COPY` statement:
 
   * a PostgreSQL database
   * an application
-    - that needs access to the filesystem hosting the CSV and the timestamp file
+    - that needs access to the file system hosting the CSV and the timestamp file
 
 Can you see the difference?
 
-The main error I made was that I only considered my own position. Had I acted with empathy (and common sense), I might have realized that almost no one hosts their own databases. Since Heroku has been around for a while and with companies such as Google now offering cloud-based versions of PostgreSQL, not even my own team hosts their own database anymore!
+The main error I made was that I only considered my own position. Had I acted with empathy (and common sense), I might have realized that almost no one in the world hosts their own databases. Since Heroku has been around for a while now and with companies such as Google offering cloud-based versions of PostgreSQL, not even my own team hosts their own database anymore!
 
-Also, less dependencies should be viewed as less liabilities to manage!
+Also, less dependencies should be viewed as "less liabilities", instead of "more freedom" to manage!
 
 Fudge.
 
@@ -66,13 +66,13 @@ Fudge.
 
 Cloud-based PostgreSQL comes with a ton of goodies, namely that you can skip all the configuration and scaling issues.
 
-It also does not provide any extensions. Extensions you might want, like, let's say `postgres_fdw`. In short, if you want to go with the `postgres_fdw` based solution, you cannot make it work on a cloud provider, as you have no option to enable the extension - and you also have no way to make the database aware of the files.
+It also does not provide any extensions. Extensions you might want, like, let's say `postgres_fdw`. In short, if you want to go with the `postgres_fdw` based solution, you cannot make the original solution work on a cloud provider, as you have no option to enable the extension - and you also have no way to make the database aware of the files.
 
 And you better think fast of a solution, as your company wants to make a run for the cloud, as it's the future<sup>tm</sup>!
 
 # What to do now?
 
-Well, let's revisit the solution with the [`COPY`](https://www.postgresql.org/docs/11/sql-copy.html) statement:
+Well, let's revisit the suggestion with the [`COPY`](https://www.postgresql.org/docs/11/sql-copy.html) statement:
 
 > COPY moves data between PostgreSQL tables and standard file-system files. COPY TO copies the contents of a table to a file, while COPY FROM copies data from a file to a table (appending the data to whatever is in the table already). COPY TO can also copy the results of a SELECT query.
 
@@ -91,7 +91,7 @@ defmodule SynchronizeApp.Repo.Migrations.AddForeignCompaniesTable do
 # [...]
 ```
 
-We used the foreign table specification to tell PostgreSQL how to form a table based off of a CSV file. That meant that the database itself needed to know about the file and it's structure, making migrations hard.
+We used the foreign table specification to tell PostgreSQL how to form a table based off of a CSV file. That meant that the database itself needed to know about the file and it's structure, making migrations hard and causing other fun headaches at runtime when another process touches the files.
 
 But we can use all of the magic with PostgreSQLs `COPY` statement.
 
@@ -233,7 +233,7 @@ We can now bind the new function to the original file trigger and it should repl
 
 # What to take from this example
 
-Well, I am glad somebody pointed out my overcomplicated thinking. However, it took a while to see what the benefits could have been. thankfully, there was a technical solution to this particular problem, which came at the cost of additional time invested.
+Well, I am glad somebody pointed out my overcomplicated thinking. However, it took a while to see what the benefits could have been. Thankfully, there was a technical solution to this particular problem, which came at the cost of additional time invested.
 
 I compiled a [full repository](https://github.com/floriank/postgres_sync_copy) to see the thing work. I really hope this example demonstrates both an interesting technical detail as well as some insights on what to do as a tech lead in todays software development world.
 
