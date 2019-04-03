@@ -2,7 +2,7 @@
 categories = ["development"]
 title = "Moving on from postgres_fdw"
 draft = true
-date = "2019-04-04T09:30:30+01:00"
+date = "2019-04-03T09:30:30+01:00"
 +++
 
 # Revising the things you have done
@@ -13,26 +13,26 @@ I am no exception to this - which is why I look at old code like an interesting 
 
 # Listening to others
 
-I wrote the post "[The steel industry, file_fdw and the synchronisation of data](<ref "the-steel-industry-file_fdw-and-postgres.md">)" in the full self-belief that I had an absolute solution to a very hard problem.
+I wrote the post "[The steel industry, file_fdw and the synchronisation of data]({{<ref "the-steel-industry-file_fdw-and-postgres.md">}})" in the full self-belief that I had an absolute solution to a very hard problem.
 
 And at the time, it was good.
 
-I wrote the post accompanying a talk I gave at a meet up of the [most excellent Elixir Berlin group](https://www.meetup.com/Elixir-Berlin/). I think I might have even apologized for focusing more on databases than on elixir in this one.
+I wrote the post accompanying a talk I gave at a meet up of the [most excellent Elixir Berlin group](https://www.meetup.com/Elixir-Berlin/). I think I might have even apologized for focusing more on databases than on Elixir in this one.
 
-As is customary, I gave word to the crowd to ask questions - and I had a developer (with magnificently flowing, long hair) stand up amidst the group, making two points:
+As is customary, I gave the word to the crowd to ask questions - and I had a developer (with magnificently flowing, long hair) stand up amidst the group, pointing out the following:
 
   * I should absolutely partake in the meetings of the local PostgreSQL user group
   * Why could I not just execute `COPY` directly instead of keeping `file_fdw` around for creating the foreign tables?
 
 My reaction to the first one: Yes.
 
-My reaction to the second one: Ye...but, erm. Drowning in the rush of natural endorphines after entertaining a group of people for forty minutes, I think, in retrospect, I might have been dismissive.
+My reaction to the second one: Ye...but, erm. Drowning in the rush of endorphines after entertaining a group of people for forty minutes, I think, in retrospect, I might have been dismissive.
 
 I should not have been.
 
 # The more experience you have ...
 
-As I grow as a developer, I accumulate more knowledge about my work, about relationship to others. I also grow more ignorant in certain aspects. I also become more aware of what little I know about stuff. [Impostor syndrome](https://www.wikiwand.com/en/Impostor_syndrome) is something I see a lot in myself and I see in a ton of candidates, but this is thing is not about the impostor I might feel like (as there are a plethora of blog posts you can read about that).
+As I grow as a developer, I accumulate more knowledge about my work and about relationships to others. I also grow more ignorant in certain aspects. Thankfully, I also become more aware of what little I know about stuff. [Impostor syndrome](https://www.wikiwand.com/en/Impostor_syndrome) is something I see a lot in myself and I see in a ton of candidates when interviewing, but this post is not about the impostor I might feel like (as there are a plethora of blog posts you can read about that).
 
 I consider myself a technology leader - this post therefore needs to aim at what it means reflecting from a higher position, specifically dismissing points by people you might perceive as less smart or experienced. How you see errors in your own behavior before throwing out potential solutions might save you money some day. This is a common error I also see in some old school managers that straight up refuse feedback or a view too different from their own, but ranting about them might need a post of its own.
 
@@ -40,7 +40,7 @@ I consider myself a technology leader - this post therefore needs to aim at what
 
 What did I miss completely in just flat out dismissing the opinion of the developer?
 
-Well, for one thing - that they were/are __just straight up right about it__. The argument was for less complexity in a complex system. Consider the things you need to make my initial setup work:
+Well, for one thing - that they were __just straight up right about everything. The argument was for less complexity in a complex system. Consider the things you need to make my initial setup work:
 
   * a database (container)
     - that needs access to the CSV files
@@ -58,6 +58,8 @@ Can you see the difference?
 
 The main error I made was that I only considered my own position. Had I acted with empathy (and common sense), I might have realized that almost no one hosts their own databases. Since Heroku has been around for a while and with companies such as Google now offering cloud-based versions of PostgreSQL, not even my own team hosts their own database anymore!
 
+Also, less dependencies should be viewed as less liabilities to manage!
+
 Fudge.
 
 # The problem
@@ -66,7 +68,7 @@ Cloud-based PostgreSQL comes with a ton of goodies, namely that you can skip all
 
 It also does not provide any extensions. Extensions you might want, like, let's say `postgres_fdw`. In short, if you want to go with the `postgres_fdw` based solution, you cannot make it work on a cloud provider, as you have no option to enable the extension - and you also have no way to make the database aware of the files.
 
-And you better think fast of a solution, as your company wants to make a run for the cloud, as it's the future<tm>.
+And you better think fast of a solution, as your company wants to make a run for the cloud, as it's the future<sup>tm</sup>!
 
 # What to do now?
 
@@ -101,7 +103,7 @@ But we can use all of the magic with PostgreSQLs `COPY` statement.
 
 Cool, so what would that look like?
 
-```sql
+```
 COPY animals (
   species,
   name,
@@ -149,7 +151,7 @@ All this will do is just read a path and open up a stream with the data. We'll n
 Now, it turns out, Elixirs `Ecto` library [also supports streaming](https://hexdocs.pm/ecto_sql/Ecto.Adapters.SQL.html#stream/4). It allow us to use a Repo and a statement parametrized  statement to be lazily evaluated:
 
 ```elixir
-defmodule SQLSreamer do
+defmodule SQLStreamer do
   alias Ecto.Adapters.SQL
   alias MainApplication.Repo
 
@@ -235,6 +237,6 @@ Well, I am glad somebody pointed out my overcomplicated thinking. However, it to
 
 I compiled a [full repository](https://github.com/floriank/postgres_sync_copy) to see the thing work. I really hope this example demonstrates both an interesting technical detail as well as some insights on what to do as a tech lead in todays software development world.
 
-lastly, thanks to the unknown developer who called me out.
+Lastly, thanks to the unknown developer who called me out.
 
 You da real MVP.
