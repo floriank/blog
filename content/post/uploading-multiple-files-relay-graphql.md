@@ -98,7 +98,7 @@ mutation do
 end
 ```
 
-In this case we have to understand that the relay specifies input types for a given mutation, the reason being that the input object can be individually validated apart from the actual data (in this case, `Kitten` is the type and absinthe provides us with `KittenInput` ) object. The absinthe notation provides a convenient syntax here. 
+In this case we have to understand that the relay specifies input types for a given mutation, the reason being that the input object can be individually validated apart from the actual data (in this case, `Kitten` is the type and absinthe provides us with `NewKittenInput` ) object. The absinthe notation provides a convenient syntax here. 
 
 ## What does the request look like?
 
