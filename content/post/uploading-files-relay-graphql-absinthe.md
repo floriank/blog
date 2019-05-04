@@ -158,7 +158,7 @@ The solution is similar if you're relying on just [using custom `fetch` call ins
 
 So what if we had multiple images? After all, one can never have too many kitten pictures uploaded to a backend.
 
-Well, at the moment, I could not find a good way to batch upload images with Absinthe, which is unfortunate, but this will hopefully change in the future.
+Well, at the moment, I could not find a good way to batch upload images with Absinthe, which is unfortunate, but [this will hopefully change in the future](https://github.com/absinthe-graphql/absinthe_plug/pull/201).
 
 I'll probably try to implement the [GraphQL Multipart request spec](https://github.com/jaydenseric/graphql-multipart-request-spec) if I have the time to do so.
 
