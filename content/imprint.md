@@ -8,8 +8,6 @@ _required for compliance with German law_
 
 <pre>
 Notes of an awful developer (Florian Kraft)
-Kaiserin-Augusta-Allee 49
-10589 Berlin
 E-Mail: schnuffifk+impressum@gmail.com
 </pre>
 
