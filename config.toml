@@ -3,7 +3,7 @@ title = "Notes of an awful developer"
 contentdir = "content"
 publishdir = "public"
 canonifyurls = true
-copyright = "(c) 2016 Florian Kraft"
+copyright = "(c) 2025 Florian Kraft"
 theme = "nofancy"
 [author]
   name = "Florian Kraft"
